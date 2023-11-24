@@ -1,3 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Junction Hackathon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main role="main" class="container mt-5">
+        <!-- Loading Progress -->
+        <div class="row">
+            <div class="col-12">
+                <div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">Loading Model</div>
+            </div>
+        </div>
 
+        <!-- Prediction Settings -->
+        <div class="row">
+            <div class="col-6">
+                <select id="prediction-type">
+                    <option value="trash">Trash</option>
+                </select>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="size-check">
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Input and Predict Button -->
+        <div class="row">
+            <div class="col-6">
+                <input id="image-selector" class="form-control border-0" type="file">
+            </div>
+            <div class="col-6">
+                <button id="predict-button" class="btn btn-primary float-right">Predict</button>
+            </div>
+        </div>
+
+        <!-- Image and Predictions -->
+        <hr>
+        <div class="col-6">
+            <h2 class="ml-3">Image</h2>
+            <img id="selected-image" class="ml-3" alt="">
+        </div>
+        <div class="col-6">
+            <h2 class="ml-3">Predictions</h2>
+            <ol id="prediction-list"></ol>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.9.0/dist/tf.min.js"></script>
+    <script src="../JunctionHackathon/predict.js"></script>
+</body>
 </html>
