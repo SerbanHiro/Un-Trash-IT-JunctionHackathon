@@ -77,7 +77,7 @@ async function loadModel(selectedOption) {
     }
 
     // Construct the path to the model file
-    const defaultPath = `model/${selectedOption}/model.json`;
+    const defaultPath = `../model/${selectedOption}/model.json`;
 
     try {
         // Load the TensorFlow.js model
