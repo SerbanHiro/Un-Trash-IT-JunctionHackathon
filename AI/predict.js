@@ -135,7 +135,9 @@ $("#predict-button").click(async function () {
     if (!imageLoaded) {
         alert("Please select an image first");
         return;
-    }
+    } else {
+		$("#prediction-list").empty();
+	}
 
     // Get the selected image and prediction type, then render predictions
     const image = $('#selected-image').get(0);

@@ -1,6 +1,15 @@
 body {
     min-height: 75rem;
     padding-top: 4.5rem;
+    padding-top: 56px; 
+}
+
+header {
+    background-color: #343a40; 
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
 }
 
 .bd-placeholder-img {
@@ -18,6 +27,6 @@ body {
     }
 }
 
-.progress-bar {
-    display: none; /* Initially hide the progress bar */
+.progress-bar #loading-progress {
+    display: none; 
 }
