@@ -451,6 +451,7 @@ function getColorFromIndex(index, scale) {
 // Add an event listener for the districtSelector change event
 document.getElementById('districtSelector').addEventListener('change', function () {
     const selectedDistrict = this.value;
+    coloredLayerGroup.clearLayers();
     centerOnDistrict(selectedDistrict);
 });
 
@@ -467,7 +468,6 @@ function centerOnDistrict(districtName) {
     // If the district layer is found, fit the map to its bounds and split into polygons
     if (districtLayer) {
         map.fitBounds(districtLayer.getBounds());
-        console.log(districtLayer);
     }
 }
 
