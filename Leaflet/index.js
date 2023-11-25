@@ -36,13 +36,13 @@ function createMarkerCluster(markers, layerName) {
     markers.forEach(function (data) {
         var marker;
 
-        if (layerName === 'glass') {
+        if (layerName == 'glass') {
             // Use the glassIcon for glass markers
             marker = L.marker([data.lat, data.lng], { icon: glassIcon }).bindPopup(data.popup);
-        } else if (layerName === 'household-garbage') {
+        } else if (layerName == 'household-garbage') {
             // Use the default icon for household-garbage markers
             marker = L.marker([data.lat, data.lng], { icon: householdGarbageIcon }).bindPopup(data.popup);
-        } else if (layerName === 'recyclable-garbage') {
+        } else if (layerName == 'recyclable-garbage') {
             // Use the default icon for household-garbage markers
             marker = L.marker([data.lat, data.lng], { icon: recyclableGarbageIcon }).bindPopup(data.popup);
         } else {
@@ -130,9 +130,13 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
     .then(response => response.json())
     .then(data => {
         // Find the feature for the 8th district
+        processGeoJSON(data);
         var districtLayer = null;
         map.eachLayer(function (layer) {
-            if (layer.feature && layer.feature.properties.name === 'VIII. kerület') {
+            if(layer.feature != undefined) {
+                console.log(layer.feature.properties.name);
+            }
+            if (layer.feature && layer.feature.properties.name == 'VIII. kerület') {
                 districtLayer = layer;
             }
         });
@@ -243,9 +247,12 @@ function changeMapLayer(layer) {
     if (map.markerClusters['recyclable-garbage']) {
         map.removeLayer(map.markerClusters['recyclable-garbage']);
     }
+    reupdateMap(layer);
+}
 
+function reupdateMap(layer) {
     // Add the selected layer to the map
-    if (layer === 'glass') {
+    if (layer == 'glass') {
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: '© Mapbox',
             maxZoom: 18,
@@ -253,7 +260,7 @@ function changeMapLayer(layer) {
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
         map.markerClusters['glass'].addTo(map); // Add the glass layer markers
-    } else if (layer === 'household-garbage') {
+    } else if (layer == 'household-garbage') {
         // TODO: Use a different tile layer for household-garbage view
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: '© Mapbox',
@@ -262,7 +269,7 @@ function changeMapLayer(layer) {
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
         map.markerClusters['household-garbage'].addTo(map); // Add the household-garbage layer markers
-    } else if (layer === 'recyclable-garbage') {
+    } else if (layer == 'recyclable-garbage') {
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: '© Mapbox',
             maxZoom: 18,
@@ -398,15 +405,14 @@ function processGeoJSON(data) {
         // Find the GeoJSON layer corresponding to the selected district
         var districtLayer = null;
         map.eachLayer(function (layer) {
-            if (layer.feature && layer.feature.properties.name === districtName) {
+            if (layer.feature && layer.feature.properties.name == districtName) {
                 districtLayer = layer;
             }
         });
 
         // If the district layer is found, fit the map to its bounds
         if (districtLayer) {
-            console.log("TESTTT");
-            console.log(districtLayer.getLatLngs());
+            console.log(districtLayer.feature.properties.population);
             map.fitBounds(districtLayer.getBounds());
         }
     }
