@@ -437,4 +437,110 @@ currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
 });
 
+
 currentLayer.addTo(map);
+// function isMarkerInsidePolygon(randomLat,randomLng, poly) {
+
+// function splitDistrictIntoPolygons(districtLayer) {
+//     const numDivisions = 100; // Adjust the number of divisions based on your preference
+//     const gridSize = calculateGridSize(districtLayer, numDivisions);
+//     const colorScale = ['#00FF00', '#FFFF00', '#FFA500', '#FF0000']; // Example color scale
+
+//     // Clear existing layers
+//     if (map.polygonLayer) {
+//         map.removeLayer(map.polygonLayer);
+//     }
+
+//     const polygons = [];
+
+//     // Loop through the grid, making sure it fits inside the district borders
+//     for (let lat = districtLayer.getBounds().getSouth(); lat < districtLayer.getBounds().getNorth(); lat += gridSize) {
+//         for (let lng = districtLayer.getBounds().getWest(); lng < districtLayer.getBounds().getEast(); lng += gridSize) {
+//             const latEnd = lat + gridSize > districtLayer.getBounds().getNorth() ? districtLayer.getBounds().getNorth() : lat + gridSize;
+//             const lngEnd = lng + gridSize > districtLayer.getBounds().getEast() ? districtLayer.getBounds().getEast() : lng + gridSize;
+
+//             const latCenter = (lat + latEnd) / 2;
+//             const lngCenter = (lng + lngEnd) / 2;
+
+//             const halfSide = gridSize / 2;
+
+//             const polygon = L.rectangle([[latCenter - halfSide, lngCenter - halfSide], [latCenter + halfSide, lngCenter + halfSide]], {
+//                 color: 'black',
+//                 weight: 1,
+//                 fillOpacity: 0.7,
+//             });
+
+//             // Assign a random pollution index (placeholder)
+//             const pollutionIndex = Math.random();
+
+//             // Color the polygon based on the pollution index
+//             polygon.setStyle({
+//                 fillColor: getColorFromIndex(pollutionIndex, colorScale),
+//             });
+
+//             polygons.push(polygon);
+//         }
+//     }
+
+//     map.polygonLayer = L.layerGroup(polygons);
+//     map.polygonLayer.addTo(map);
+// }
+
+// function calculateGridSize(districtLayer, numDivisions) {
+//     const latSpan = districtLayer.getBounds().getNorth() - districtLayer.getBounds().getSouth();
+//     const lngSpan = districtLayer.getBounds().getEast() - districtLayer.getBounds().getWest();
+//     return Math.min(latSpan / numDivisions, lngSpan / numDivisions);
+// }
+
+function getColorFromIndex(index, scale) {
+    // Example color scale, you can modify this based on your pollution levels
+    if (index < 0.25) {
+        return scale[0]; // Green
+    } else if (index < 0.5) {
+        return scale[1]; // Yellow
+    } else if (index < 0.75) {
+        return scale[2]; // Orange
+    } else {
+        return scale[3]; // Red
+    }
+}
+
+// Add an event listener for the districtSelector change event
+document.getElementById('districtSelector').addEventListener('change', function () {
+    const selectedDistrict = this.value;
+    centerOnDistrict(selectedDistrict);
+});
+
+function centerOnDistrict(districtName) {
+    // Find the GeoJSON layer corresponding to the selected district
+    let districtLayer = null;
+    map.eachLayer(function (layer) {
+        if (layer.feature && layer.feature.properties.name == districtName) {
+            districtLayer = layer;
+        }
+    });
+
+    // If the district layer is found, fit the map to its bounds and split into polygons
+    if (districtLayer) {
+        map.fitBounds(districtLayer.getBounds());
+        var bounds = districtLayer.getBounds();
+        
+        console.log("West: "+bounds.getWest());
+        console.log("South: "+bounds.getSouth());
+        console.log("East: "+bounds.getEast());
+        console.log("North: "+bounds.getNorth());
+        console.log('~~~~~');
+
+        // Convert the bounds to an array of vertices
+
+        // Get the bounds of your districtLayer
+        // Get the bounds of your districtLayer
+        var bounds = districtLayer.getBounds();
+
+        // Triangulate using Earcut
+        var triangles = earcut(bounds);
+        console.log(triangles);
+
+        //splitDistrictIntoPolygons(districtLayer);
+    }
+}
