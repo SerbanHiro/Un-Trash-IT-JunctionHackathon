@@ -461,9 +461,6 @@ document.getElementById('districtSelector').addEventListener('change', function 
 
 var coloredLayerGroup = L.layerGroup().addTo(map);
 function centerOnDistrict(districtName) {
-    // Clear the previous layers when selecting a new district
-    coloredLayerGroup.clearLayers();
-
     // Find the GeoJSON layer corresponding to the selected district
     let districtLayer = null;
     map.eachLayer(function (layer) {
@@ -475,42 +472,51 @@ function centerOnDistrict(districtName) {
     // If the district layer is found, fit the map to its bounds and split into polygons
     if (districtLayer) {
         map.fitBounds(districtLayer.getBounds());
-        var bounds = districtLayer.getLatLngs(); // bounds is an array of LatLngs arrays
 
-        var geojsonFeature = districtLayer.toGeoJSON();
-
-        // Create square grid subdivisions within the bounding box
-        var bbox = turf.bbox(geojsonFeature);
-        var subdivisions = turf.squareGrid(bbox, 0.09, { units: 'kilometers' });
-
-        subdivisions.features.forEach(function (feature) {
-            // Generate a random color (hex format)
-            var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-
-            var coordinates = feature.geometry.coordinates;
-            var shouldShow = false;
-            coordinates.forEach(function (ring) {
-                ring.forEach(function (coord) {
-                    var lat = coord[1];
-                    var lng = coord[0];
-                    if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
-                        shouldShow = true;
-                    }
-                });
-            });
-
-            if (shouldShow) {
-                L.geoJSON(feature, {
-                    style: function () {
-                        return {
-                            fillColor: randomColor,
-                            fillOpacity: 1, // Adjust the fill opacity here
-                            color: 'black',  // Border color
-                            weight: 1        // Border width
-                        };
-                    }
-                }).addTo(coloredLayerGroup);
-            }
-        });
+        showDistrictGrid(districtLayer);
     }
+}
+
+function showDistrictGrid(districtLayer) {
+    coloredLayerGroup.clearLayers();
+
+    var geojsonFeature = districtLayer.toGeoJSON();
+
+    // Create square grid subdivisions within the bounding box
+    var bbox = turf.bbox(geojsonFeature);
+    var subdivisions = turf.squareGrid(bbox, 0.09, { units: 'kilometers' });
+
+    subdivisions.features.forEach(function (feature) {
+        // Generate a random color (hex format)
+        var color = '#' + Math.floor(Math.random()*16777215).toString(16);
+
+        // START POLLUTION INDEX 
+
+        // END 
+
+        var coordinates = feature.geometry.coordinates;
+        var shouldShow = false;
+        coordinates.forEach(function (ring) {
+            ring.forEach(function (coord) {
+                var lat = coord[1];
+                var lng = coord[0];
+                if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
+                    shouldShow = true;
+                }
+            });
+        });
+
+        if (shouldShow) {
+            L.geoJSON(feature, {
+                style: function () {
+                    return {
+                        fillColor: color,
+                        fillOpacity: 1, // Adjust the fill opacity here
+                        color: 'black',  // Border color
+                        weight: 1        // Border width
+                    };
+                }
+            }).addTo(coloredLayerGroup);
+        }
+    });
 }
