@@ -294,7 +294,11 @@ function addMarkersInSpecificRegion(specificDistrictName, districtLayer) {
     var regionName=specificDistrictName+'-region';
     
     if (!map.markerClusters[regionName]) {
-        map.markerClusters[regionName] = L.markerClusterGroup();
+        map.markerClusters[regionName] = L.markerClusterGroup({
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            maxClusterRadius: 100
+        });
     } else {
         map.markerClusters[regionName].clearLayers();
     } 
@@ -314,7 +318,11 @@ function removeAllMarkers(specificDistrictName) {
     var regionName=specificDistrictName+'-region';
 
     if (!map.markerClusters[regionName]) {
-        map.markerClusters[regionName] = L.markerClusterGroup();
+        map.markerClusters[regionName] = L.markerClusterGroup({
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            maxClusterRadius: 100
+        });
     } else {
         map.markerClusters[regionName].clearLayers();
     } 
@@ -329,7 +337,11 @@ function removeAllMarkersButNotThoseInSelectedRegion(specificDistrictName, distr
     var regionName=specificDistrictName+'-region';
 
     if (!map.markerClusters[regionName]) {
-        map.markerClusters[regionName] = L.markerClusterGroup();
+        map.markerClusters[regionName] = L.markerClusterGroup({
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            maxClusterRadius: 100
+        });
     } else {
         map.markerClusters[regionName].clearLayers();
     } 
