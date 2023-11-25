@@ -12,7 +12,7 @@ function createMarkerCluster(markers, layerName) {
     var markerCluster = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        maxClusterRadius: 500,
+        maxClusterRadius: 100,
         iconCreateFunction: function (cluster) {
             var childCount = cluster.getChildCount();
             var c = ' marker-cluster-';
@@ -62,27 +62,100 @@ var markersArrayGlass = [
     { lat: 47.4862515, lng: 19.0793579, popup: 'üveggyűjtő sziget - VIII. kerület, Práter utca -Szigony utca sarok SPAR előtt' },
     { lat: 47.4901467, lng: 19.0829748, popup: 'üveggyűjtő sziget - VIII. kerület, Dankó utca 23. - Magdolna utca sarok' },
     { lat: 47.4929454, lng: 19.0764147, popup: 'üveggyűjtő sziget - VIII. kerület, Déry Miksa utca 19 előtt' },
-    { lat: 47.510058, lng: 19.1516588, popup: 'üveggyűjtő sziget - XIV. kerület, Gvadányi utca 29/a előtt' },
-    { lat: 47.5059865, lng: 19.1570735, popup: 'üveggyűjtő sziget - XIV. kerület, Cziráki u. -Szolnoki u. sarok' },
-    { lat: 47.5051122, lng: 19.1530935, popup: 'üveggyűjtő sziget - XIV. kerület, Ötvenes utca - Kerepesi út' },
-    { lat: 47.5540215, lng: 19.0814541, popup: 'üveggyűjtő sziget - XIII. kerület, Tomori utca 31-33. szám előtt' },
-    { lat: 47.5520885, lng: 19.0911671, popup: 'üveggyűjtő sziget - IV. kerület, Pozsonyi u. 2/b (remízzel szemben)' },
-    { lat: 47.5487262, lng: 19.0762637, popup: 'üveggyűjtő sziget - XIII. kerület, Gyöngyösi utca 11-gyel szemben' },
-    { lat: 47.5563918, lng: 19.1014851, popup: 'üveggyűjtő sziget - IV. kerület, Rózsa u. 9' },
-    { lat: 47.4945703, lng: 19.035157, popup: 'üveggyűjtő sziget - I. kerület, Gellérthegy u. - Orvos lépcső' },
-    { lat: 47.5268535, lng: 18.9804671, popup: 'üveggyűjtő sziget - II. kerület, Fekete István utca 11. - Szerb Antal utca' },
+
+    { lat: 47.494037, lng: 19.0796845, popup: 'üveggyűjtő sziget - VIII. kerület, Vay Ádám utca - Alföldi utca' },
+    { lat: 47.4912433, lng: 19.1050119, popup: 'üveggyűjtő sziget - VIII. kerület, Törökbecse utcában, sport utcában' },
+    { lat: 47.4767744, lng: 19.0989147, popup: 'üveggyűjtő sziget - VIII. kerület, Győrffy István utca 24-gyel szemben' },
+    { lat: 47.4786036, lng: 19.0944534, popup: 'üveggyűjtő sziget - VIII. kerület, Rezső tér 16-tal szemben' },
+    
 ];
 
 var markersArrayHousehold = [
-    { lat: 47.48, lng: 19.08, popup: 'Marker 1 Household' },
-    { lat: 47.46, lng: 18.98, popup: 'Marker 2 Household' },
-    { lat: 47.44, lng: 19.15, popup: 'Marker 3 Household' }
+    { lat: 47.489059, lng: 19.1073802, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Lokomotív utca - Tbiliszi (voltVagon) tér (a templom mögött)' },
+    { lat: 47.4924047, lng: 19.1085199, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hungária krt. 12-14. előtt' },
+    { lat: 47.4924274, lng: 19.1062718, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Ciprus u. - Törökbecse u. új társasházzal szemben' },
+    { lat: 47.495918, lng: 19.107533, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hős utca 9-11. (Penny Market parkolóval szemben)' },
+    { lat: 47.4973672, lng: 19.1045862, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Stróbl Alajos utca 7. - Strázsa utca sarok' },
+    { lat: 47.4822384, lng: 19.0915241, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
 ];
 
+function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddTo) {
+    const bounds = feature.getBounds();
+    var sw=bounds.getSouthWest();
+    var ne=bounds.getNorthEast();
+
+    for (var i = 0; i < numCoordinates; i++) {
+        var randomLat = Math.random() * (ne.lat - sw.lat) +sw.lat;
+        var randomLng = Math.random() * (ne.lng - sw.lng) +sw.lng;
+        if (isMarkerInsidePolygon(randomLat,randomLng,feature)) {
+          arrayToAddTo.push({
+            lat: randomLat,
+            lng: randomLng,
+            popup: 'Háztartási hulladékgyűjtő sziget - VIII. kerület, household garbage dumpster'
+          });
+        }
+      }
+}
+
+function isMarkerInsidePolygon(randomLat,randomLng, poly) {
+    var polyPoints = poly.getLatLngs();
+    var x = randomLat, y = randomLng;
+    // console.log('~~~')
+    // console.log(polyPoints.length);
+    // console.log('-----');
+    // console.log("Lat: "+x);
+    // console.log("Lng: "+y);
+
+    // Bi-dimensional Ray Casting Algorithm 
+    var inside = false;
+    for(var k=0;k<polyPoints.length;++k) {
+        for(var i=0,j=polyPoints[k].length -1; i<polyPoints[k].length; j=i++) {
+            var xi = polyPoints[k][i].lat, yi = polyPoints[k][i].lng;
+            var xj = polyPoints[k][j].lat, yj = polyPoints[k][j].lng;
+            // console.log("Xi: "+xi);
+            // console.log("Xj: "+xj);
+            var intersect = ((yi > y) != (yj > y))
+                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            //console.log("Intersect: "+intersect);
+            if (intersect) inside = !inside;
+        }
+    }
+    // console.log(inside);
+    // console.log('~~~');
+    return inside;
+}
+
+// Load GeoJSON data using Fetch API
+fetch('hungary_administrative_boundaries_level9_polygon.geojson')
+    .then(response => response.json())
+    .then(data => {
+        // Find the feature for the 8th district
+        var districtLayer = null;
+        map.eachLayer(function (layer) {
+            if (layer.feature && layer.feature.properties.name === 'VIII. kerület') {
+                districtLayer = layer;
+            }
+        });
+        //console.log(districtLayer);
+        if (districtLayer) {
+            // Example: Generate 5 random coordinates and add them to the existing array
+            generateRandomCoordinatesInFeature(1000, districtLayer, markersArrayHousehold);
+            createMarkerCluster(markersArrayHousehold, 'household-garbage');
+            generateRandomCoordinatesInFeature(200, districtLayer, markersArrayRecyclable);
+            createMarkerCluster(markersArrayRecyclable, 'recyclable-garbage');
+        } else {
+            console.error('Could not find the 8th district in the GeoJSON file.');
+        }
+    })
+    .catch(error => console.error('Error loading GeoJSON:', error));
+
 var markersArrayRecyclable = [
-    { lat: 47.498, lng: 19.03, popup: 'Recyclable Garbage 1' },
-    { lat: 47.496, lng: 19.035, popup: 'Recyclable Garbage 2' },
-    { lat: 47.497, lng: 19.028, popup: 'Recyclable Garbage 3' }
+    { lat: 47.489059, lng: 19.1073802, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Lokomotív utca - Tbiliszi (voltVagon) tér (a templom mögött)' },
+    { lat: 47.4924047, lng: 19.1085199, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Hungária krt. 12-14. előtt' },
+    { lat: 47.4924274, lng: 19.1062718, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Ciprus u. - Törökbecse u. új társasházzal szemben' },
+    { lat: 47.495918, lng: 19.107533, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Hős utca 9-11. (Penny Market parkolóval szemben)' },
+    { lat: 47.4973672, lng: 19.1045862, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Stróbl Alajos utca 7. - Strázsa utca sarok' },
+    { lat: 47.4822384, lng: 19.0915241, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
 ];
 
 var recyclingCenters = [
@@ -151,8 +224,6 @@ L.control.layers({}, { 'Recycling Centers': recyclingLayer }, { collapsed: false
 map.markerClusters = {}; // Object to store marker clusters
 
 createMarkerCluster(markersArrayGlass, 'glass');
-createMarkerCluster(markersArrayHousehold, 'household-garbage');
-createMarkerCluster(markersArrayRecyclable, 'recyclable-garbage');
 
 var currentLayer;
 
@@ -334,6 +405,8 @@ function processGeoJSON(data) {
 
         // If the district layer is found, fit the map to its bounds
         if (districtLayer) {
+            console.log("TESTTT");
+            console.log(districtLayer.getLatLngs());
             map.fitBounds(districtLayer.getBounds());
         }
     }
