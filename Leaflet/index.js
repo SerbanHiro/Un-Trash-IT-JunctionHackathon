@@ -598,10 +598,13 @@ function showDistrictGrid(districtLayer, index) {
         });
 
         // START POLLUTION INDEX
-        /* Explanation:
-        *
-        *
-        *
+        /* Explanation: Firstly we need to know what variables must be taken into account when calculating the pollution of garbage index.
+        *               The index refers to how many dumpsters are in a specific area compared to the average population of the area.
+        *               A bright red would mean that there are too few dumpsters. A pale yellow would mean that there are enough dumpsters.
+        *               Variables to use : - populationOfDistrict, populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares,
+        *                                  - dumpstersPerGeneratedSquareAvg = dumpsters/numberOfGeneratedSquares, -dumpstersPerSquare -> code
+        *                                  - recyclyingCentersPerDistrictAvg = recyclyingCentersTotal/numberOfDistricts, -recyclyingCentersPerDistrict
+        *                                  - timePeriodOfPickingTrashAvg, -timePeriodOfPickingTrash
         */
         if(isPark) {
             color="WHITE";
