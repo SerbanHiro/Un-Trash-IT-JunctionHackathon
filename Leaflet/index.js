@@ -156,8 +156,10 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
             // Example: Generate 5 random coordinates and add them to the existing array
             generateRandomCoordinatesInFeature(1000, districtLayer, markersArrayHousehold);
             createMarkerCluster(markersArrayHousehold, 'household-garbage');
+            createMarkerCluster(markersArrayHousehold, 'household-garbage-region');
             generateRandomCoordinatesInFeature(200, districtLayer, markersArrayRecyclable);
             createMarkerCluster(markersArrayRecyclable, 'recyclable-garbage');
+            createMarkerCluster(markersArrayRecyclable, 'recyclable-garbabe-region');
         } else {
             console.error('Could not find the 8th district in the GeoJSON file.');
         }
@@ -239,36 +241,114 @@ L.control.layers({}, { 'Recycling Centers': recyclingLayer }, { collapsed: false
 map.markerClusters = {}; // Object to store marker clusters
 
 createMarkerCluster(markersArrayGlass, 'glass');
+createMarkerCluster(markersArrayGlass, 'glass-region');
 
 var currentLayer;
+
+// Add an event listener for the districtSelector change event
+document.getElementById('districtSelector').addEventListener('change', function () {
+    const selectedDistrict = this.value;
+    coloredLayerGroup.clearLayers();
+    removeAllMarkersButNotThoseInSelectedRegion('glass',getDistrctLayerFromDistrictName(selectedDistrict));
+    removeAllMarkersButNotThoseInSelectedRegion('household-garbage',getDistrctLayerFromDistrictName(selectedDistrict));
+    removeAllMarkersButNotThoseInSelectedRegion('recyclable-garbage',getDistrctLayerFromDistrictName(selectedDistrict));
+    centerOnDistrict(selectedDistrict);
+});
 
 function changeMapLayer(layer) {
     // Remove the current layer if it exists
     if (currentLayer) {
         map.removeLayer(currentLayer);
     }
-
+    /* Backend and Frontend Clusters
+    * Original Cluster -> the one that contains all of the markers from the specific cluster
+    * Regional Cluster -> the one that contains all of the markers from a specific region
+    */
     // Remove previous marker clusters
     if (map.markerClusters['glass']) {
+        removeAllMarkers('glass');
         map.removeLayer(map.markerClusters['glass']);
     }
     if (map.markerClusters['household-garbage']) {
+        removeAllMarkers('household-garbage');
         map.removeLayer(map.markerClusters['household-garbage']);
     }
     if (map.markerClusters['recyclable-garbage']) {
+        removeAllMarkers('recyclable-garbage');
         map.removeLayer(map.markerClusters['recyclable-garbage']);
     }
     reupdateMap(layer);
 }
 
-function reupdateMap(layer) {
-    var districtSelector = document.getElementById('districtSelector').value;
+function getDistrctLayerFromDistrictName(districtName) {
     let districtLayer = null;
     map.eachLayer(function (layerCont) {
-        if (layerCont.feature && layerCont.feature.properties.name == districtSelector) {
+        if (layerCont.feature && layerCont.feature.properties.name == districtName) {
             districtLayer = layerCont;
         }
     });
+    return districtLayer;
+}
+
+function addMarkersInSpecificRegion(specificDistrictName, districtLayer) {
+    var regionName=specificDistrictName+'-region';
+    
+    if (!map.markerClusters[regionName]) {
+        map.markerClusters[regionName] = L.markerClusterGroup();
+    } else {
+        map.markerClusters[regionName].clearLayers();
+    } 
+
+    map.markerClusters[specificDistrictName].eachLayer(function (marker) {
+        var lat=marker.getLatLng().lat;
+        var lng=marker.getLatLng().lng;
+        if(isMarkerInsidePolygon(lat,lng,districtLayer)) {
+            //marker.addTo(map);
+            map.markerClusters[regionName].addLayer(marker);
+        }
+    });
+    map.addLayer(map.markerClusters[regionName]);
+}
+
+function removeAllMarkers(specificDistrictName) {
+    var regionName=specificDistrictName+'-region';
+
+    if (!map.markerClusters[regionName]) {
+        map.markerClusters[regionName] = L.markerClusterGroup();
+    } else {
+        map.markerClusters[regionName].clearLayers();
+    } 
+
+    map.markerClusters[specificDistrictName].eachLayer(function (marker) {
+        map.markerClusters[regionName].addLayer(marker);
+    });
+    map.removeLayer(map.markerClusters[regionName]);
+}
+
+function removeAllMarkersButNotThoseInSelectedRegion(specificDistrictName, districtLayer) {
+    var regionName=specificDistrictName+'-region';
+
+    if (!map.markerClusters[regionName]) {
+        map.markerClusters[regionName] = L.markerClusterGroup();
+    } else {
+        map.markerClusters[regionName].clearLayers();
+    } 
+
+    map.markerClusters[specificDistrictName].eachLayer(function (marker) {
+        var lat=marker.getLatLng().lat;
+        var lng=marker.getLatLng().lng;
+        if(!isMarkerInsidePolygon(lat,lng,districtLayer)) {
+            //marker.removeLayer(map);
+            //map.removeLayer(marker);
+            map.markerClusters[regionName].addLayer(marker);
+        }
+    });
+    map.removeLayer(map.markerClusters[regionName]);
+}
+
+function reupdateMap(layer) {
+    var districtSelector = document.getElementById('districtSelector').value;
+    let districtLayer = getDistrctLayerFromDistrictName(districtSelector);
 
     // Add the selected layer to the map
     if (layer == 'glass') {
@@ -278,7 +358,8 @@ function reupdateMap(layer) {
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
-        map.markerClusters['glass'].addTo(map); // Add the glass layer markers
+        //map.markerClusters['glass'].addTo(map); // Add the glass layer markers
+        addMarkersInSpecificRegion('glass',districtLayer);
         showDistrictGrid(districtLayer,6);
     } else if (layer == 'household-garbage') {
         // TODO: Use a different tile layer for household-garbage view
@@ -288,7 +369,8 @@ function reupdateMap(layer) {
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
-        map.markerClusters['household-garbage'].addTo(map); // Add the household-garbage layer markers
+        //map.markerClusters['household-garbage'].addTo(map); // Add the household-garbage layer markers
+        addMarkersInSpecificRegion('household-garbage',districtLayer);
         showDistrictGrid(districtLayer,4);
     } else if (layer == 'recyclable-garbage') {
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -297,7 +379,8 @@ function reupdateMap(layer) {
             id: 'mapbox/streets-v11',
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
-        map.markerClusters['recyclable-garbage'].addTo(map); // Add the household-garbage layer markers
+        //map.markerClusters['recyclable-garbage'].addTo(map); // Add the household-garbage layer markers
+        addMarkersInSpecificRegion('recyclable-garbage',districtLayer);
         showDistrictGrid(districtLayer,2);
     }
 
@@ -345,11 +428,6 @@ function processGeoJSON(data) {
     }).addTo(map);
 
     sortOptions(districtSelector);
-
-    districtSelector.addEventListener('change', function () {
-        var selectedDistrict = this.value;
-        centerOnDistrict(selectedDistrict);
-    });
 
     function sortOptions(menu) {
         var options = Array.from(menu.options);
@@ -448,22 +526,10 @@ function getColorFromIndex(index, scale) {
     }
 }
 
-// Add an event listener for the districtSelector change event
-document.getElementById('districtSelector').addEventListener('change', function () {
-    const selectedDistrict = this.value;
-    coloredLayerGroup.clearLayers();
-    centerOnDistrict(selectedDistrict);
-});
-
 var coloredLayerGroup = L.layerGroup().addTo(map);
 function centerOnDistrict(districtName) {
     // Find the GeoJSON layer corresponding to the selected district
-    let districtLayer = null;
-    map.eachLayer(function (layer) {
-        if (layer.feature && layer.feature.properties.name == districtName) {
-            districtLayer = layer;
-        }
-    });
+    let districtLayer = getDistrctLayerFromDistrictName(districtName);
 
     // If the district layer is found, fit the map to its bounds and split into polygons
     if (districtLayer) {
@@ -485,7 +551,7 @@ function showDistrictGrid(districtLayer, index) {
         var color = '#' + Math.floor(Math.random()*16777215).toString(16);
 
         // START POLLUTION INDEX 
-        if(index>5) {
+        if(index>=5) {
             color="RED";
         } else if(index>3) {
             color="BLUE";
