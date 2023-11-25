@@ -358,9 +358,12 @@ function removeAllMarkersButNotThoseInSelectedRegion(specificDistrictName, distr
     map.removeLayer(map.markerClusters[regionName]);
 }
 
+var currentTrashType="";
 function reupdateMap(layer) {
     var districtSelector = document.getElementById('districtSelector').value;
     let districtLayer = getDistrctLayerFromDistrictName(districtSelector);
+
+    currentTrashType=layer;
 
     // Add the selected layer to the map
     if (layer == 'glass') {
@@ -573,7 +576,36 @@ function showDistrictGrid(districtLayer, index) {
 
     // Create square grid subdivisions within the bounding box
     var bbox = turf.bbox(geojsonFeature);
-    var subdivisions = turf.squareGrid(bbox, 0.095, { units: 'kilometers' });
+    var subdivisions = turf.squareGrid(bbox, 1, { units: 'kilometers' }); // 0.095
+
+    var recyclingCenter=0;
+    var squares=0;
+    var isInside=false;
+    subdivisions.features.forEach(function (feature) {
+        var coordinates = feature.geometry.coordinates;
+        isInside=false;
+        coordinates.forEach(function (ring) {
+            ring.forEach(function (coord) {
+                var lat = coord[1];
+                var lng = coord[0];
+                if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
+                    isInside=true;
+                }
+            });
+        });
+        if(isInside) {
+            ++squares;
+        }
+    });
+
+    recyclingMarkers.forEach(function (feature) {
+        var latlng = feature.getLatLng();
+        var lat=latlng.lat;
+        var lng=latlng.lng;
+        if(isMarkerInsidePolygon(lat,lng,districtLayer)) {
+            ++recyclingCenter;
+        }
+    });
 
     subdivisions.features.forEach(function (feature) {
         // Generate a random color (hex format)
@@ -582,10 +614,13 @@ function showDistrictGrid(districtLayer, index) {
         var coordinates = feature.geometry.coordinates;
         var shouldShow = false;
         var isPark=false; 
+        var polygonCoordinates=[];
+
         coordinates.forEach(function (ring) {
             ring.forEach(function (coord) {
                 var lat = coord[1];
                 var lng = coord[0];
+                polygonCoordinates.push([lat,lng]);
                 if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
                     shouldShow = true;
                 }
@@ -596,6 +631,47 @@ function showDistrictGrid(districtLayer, index) {
                 });
             });
         });
+
+        var polygon=L.polygon(polygonCoordinates);
+        
+        // SQUARES
+        var numberOfGeneratedSquares = squares;
+
+        // POPULATION
+        var populationOfDistrict = districtLayer.feature.properties.population;
+        var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares;
+
+        // GLASS
+        var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon);
+        var glassDumpsterPerSquareAvg = glassDumpsterPerSquare/numberOfGeneratedSquares;
+
+        // HOUSEHOLD GARBAGE
+        var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon);
+        var householdGarbageDumpsterPerSquareAvg = householdGarbageDumpsterPerSquare/numberOfGeneratedSquares;
+
+        // RECYCLABLE GARBAGE
+        var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon);
+        var recyclableGarbageDumpsterPerSquareAvg = recyclableGarbageDumpsterPerSquare/numberOfGeneratedSquares;
+
+        // RECYCLING CENTERS
+        var recyclyingCentersPerDistrict = recyclingCenter;
+        var recyclyingCentersPerDistrictAvg = recyclingCenter/23; // 23 districts in Budapest
+
+        var trashType=currentTrashType;
+        var popup=""; 
+        switch(trashType) {
+            case 'glass':
+                popup="Glass Per Square: "+glassDumpsterPerSquare;
+                break;
+            case 'household-garbage':
+                popup="Household Garbage Per Square: "+householdGarbageDumpsterPerSquare;
+                break;
+            case 'recyclable-garbage':
+                popup="Recyclable Garbage Per Square: "+recyclableGarbageDumpsterPerSquare;
+        }
+        console.log(popup);
+
+        
 
         // START POLLUTION INDEX
         /* Explanation: Firstly we need to know what variables must be taken into account when calculating the pollution of garbage index.
@@ -628,7 +704,19 @@ function showDistrictGrid(districtLayer, index) {
                         weight: 1        // Border width
                     };
                 }
-            }).addTo(coloredLayerGroup);
+            }).addTo(coloredLayerGroup).bindPopup(popup);
         }
     });
+}
+
+function getNumberOfObjectsPerSquare(layerName,polygon) {
+    var temp=0;
+    map.markerClusters[layerName].eachLayer(function (marker) {
+        var lat=marker.getLatLng().lat;
+        var lng=marker.getLatLng().lng;
+        if(isMarkerInsidePolygon(lat,lng,polygon)) {
+            ++temp;
+        }
+    });
+    return temp;
 }
