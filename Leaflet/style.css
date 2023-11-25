@@ -1,6 +1,13 @@
-/* Set the height of the map container to 100% of the viewport height */
+body {
+    font-family: 'Kanit', sans-serif;
+}
+
 #map {
-    position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .marker-cluster {
@@ -30,14 +37,14 @@
 }
 
 #layerContainer {
-    height: 250px;
+    height: 300px;
     width: 250px;
     position: absolute;
-    bottom: 50px;
+    bottom: 100px;
     left: -300px; /* Initial position outside the screen on the left */
     padding: 20px;
-    background-color: rgba(255, 255, 255); /* Gray with transparency */
-    border: 1px solid #ccc;
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ced4da; /* Light border color */
     border-radius: 0 10px 10px 0; /* Rounded only on the right */
     z-index: 1000; /* Ensure it's above the map */
     transition: left 1.2s ease; /* Transition for smooth animation */
@@ -49,18 +56,47 @@
 
 #layerContainer h2 {
     margin-bottom: 10px;
+    color: #000000; /* Primary blue color for headings */
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
 }
 
 #layerContainer button {
-    display: block;
-    width: 100%;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    font-size: 14px;
+    background-color: #cccccc;
+    color: #000000;
     border: none;
-    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadowy border */
+    font-size: 16px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 
+#layerContainer button:hover {
+    background-color: #979797; /* Darker blue on hover */
+}
+
+#selectorContainer {
+    margin-top: 20px;
+}
+
+#selectorContainer label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+#selectorContainer select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+}
+
+/* Animation for sliding in and out */
+#layerContainer.transition {
+    transition: left 1.2s ease;
+}

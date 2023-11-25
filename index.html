@@ -7,22 +7,27 @@
 
     <link rel="stylesheet" href="../JunctionHackathon/Leaflet/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 </head>
 <body>
     <div id="map"> </div>
     <div id="layerContainer" class="layer-container">
-        <h2>Trash types</h2>
-        <button onclick="changeMapLayer('glass')">Glass</button>
-        <button onclick="changeMapLayer('household-garbage')">Household Garbage</button>
-        <button onclick="changeMapLayer('recyclable-garbage')">Recyclable Garbage</button>
+        <h2>Trash Types</h2>
+        <div class="button-container">
+            <button onclick="changeMapLayer('glass')">Glass</button>
+            <button onclick="changeMapLayer('household-garbage')">Household Garbage</button>
+            <button onclick="changeMapLayer('recyclable-garbage')">Recyclable Garbage</button>
+        </div>
         <div id="selectorContainer">
             <label for="districtSelector">Select District:</label>
             <select id="districtSelector"></select>
-        </div> 
+        </div>
     </div>
+    
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
