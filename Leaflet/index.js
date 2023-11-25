@@ -300,7 +300,8 @@ function processGeoJSON(data) {
     L.geoJSON(data, {
         style: function (feature) {
             return {
-                fill: false
+                fill: true,
+                fillOpacity: 0
             };
         },
         onEachFeature: function (feature, layer) {
