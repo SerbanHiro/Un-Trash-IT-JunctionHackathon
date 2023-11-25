@@ -262,6 +262,14 @@ function changeMapLayer(layer) {
 }
 
 function reupdateMap(layer) {
+    var districtSelector = document.getElementById('districtSelector').value;
+    let districtLayer = null;
+    map.eachLayer(function (layerCont) {
+        if (layerCont.feature && layerCont.feature.properties.name == districtSelector) {
+            districtLayer = layerCont;
+        }
+    });
+
     // Add the selected layer to the map
     if (layer == 'glass') {
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -271,6 +279,7 @@ function reupdateMap(layer) {
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
         map.markerClusters['glass'].addTo(map); // Add the glass layer markers
+        showDistrictGrid(districtLayer,6);
     } else if (layer == 'household-garbage') {
         // TODO: Use a different tile layer for household-garbage view
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -280,6 +289,7 @@ function reupdateMap(layer) {
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
         map.markerClusters['household-garbage'].addTo(map); // Add the household-garbage layer markers
+        showDistrictGrid(districtLayer,4);
     } else if (layer == 'recyclable-garbage') {
         currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: '© Mapbox',
@@ -288,6 +298,7 @@ function reupdateMap(layer) {
             accessToken: 'pk.eyJ1IjoianVzdDFkYW5pIiwiYSI6ImNscGRyMG5sYTE5NjYycWxzNDhvdnoxNnEifQ.HaLpsV6T-CVuiU57jXjRRQ'
         });
         map.markerClusters['recyclable-garbage'].addTo(map); // Add the household-garbage layer markers
+        showDistrictGrid(districtLayer,2);
     }
 
     currentLayer.addTo(map);
@@ -456,26 +467,31 @@ function centerOnDistrict(districtName) {
     // If the district layer is found, fit the map to its bounds and split into polygons
     if (districtLayer) {
         map.fitBounds(districtLayer.getBounds());
-
-        showDistrictGrid(districtLayer);
+        console.log(districtLayer);
     }
 }
 
-function showDistrictGrid(districtLayer) {
+function showDistrictGrid(districtLayer, index) {
     coloredLayerGroup.clearLayers();
 
     var geojsonFeature = districtLayer.toGeoJSON();
 
     // Create square grid subdivisions within the bounding box
     var bbox = turf.bbox(geojsonFeature);
-    var subdivisions = turf.squareGrid(bbox, 0.09, { units: 'kilometers' });
+    var subdivisions = turf.squareGrid(bbox, 0.095, { units: 'kilometers' });
 
     subdivisions.features.forEach(function (feature) {
         // Generate a random color (hex format)
         var color = '#' + Math.floor(Math.random()*16777215).toString(16);
 
         // START POLLUTION INDEX 
-
+        if(index>5) {
+            color="RED";
+        } else if(index>3) {
+            color="BLUE";
+        } else {
+            color="GREEN";
+        }
         // END 
 
         var coordinates = feature.geometry.coordinates;
@@ -495,7 +511,7 @@ function showDistrictGrid(districtLayer) {
                 style: function () {
                     return {
                         fillColor: color,
-                        fillOpacity: 1, // Adjust the fill opacity here
+                        fillOpacity: 0.5, // Adjust the fill opacity here
                         color: 'black',  // Border color
                         weight: 1        // Border width
                     };
