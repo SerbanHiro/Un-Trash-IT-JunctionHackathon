@@ -598,6 +598,11 @@ function showDistrictGrid(districtLayer, index) {
         });
 
         // START POLLUTION INDEX
+        /* Explanation:
+        *
+        *
+        *
+        */
         if(isPark) {
             color="WHITE";
         }
