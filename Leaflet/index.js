@@ -130,7 +130,7 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
     .then(response => response.json())
     .then(data => {
         // Find the feature for the 8th district
-        processGeoJSON(data);
+        //processGeoJSON(data);
         var districtLayer = null;
         map.eachLayer(function (layer) {
             if(layer.feature != undefined) {
@@ -140,6 +140,17 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
                 districtLayer = layer;
             }
         });
+        if(districtLayer==null) {
+            processGeoJSON(data);
+            map.eachLayer(function (layer) {
+                if(layer.feature != undefined) {
+                    console.log(layer.feature.properties.name);
+                }
+                if (layer.feature && layer.feature.properties.name == 'VIII. kerület') {
+                    districtLayer = layer;
+                }
+            });
+        }
         //console.log(districtLayer);
         if (districtLayer) {
             // Example: Generate 5 random coordinates and add them to the existing array
