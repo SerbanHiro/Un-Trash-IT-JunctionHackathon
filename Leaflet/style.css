@@ -1,5 +1,7 @@
-body {
+html, body, input, textarea, select, button {
     font-family: 'Kanit', sans-serif;
+    border-color: #736b5e;
+    color: #e8e6e3;
 }
 
 #map {
@@ -43,8 +45,8 @@ body {
     bottom: 100px;
     left: -300px; /* Initial position outside the screen on the left */
     padding: 20px;
-    background-color: #f8f9fa; /* Light gray background */
-    border: 1px solid #ced4da; /* Light border color */
+    background-color: rgb(27,30,31); /* Light gray background */
+    border: 1px solid rgb(60,65,68); /* Light border color */
     border-radius: 0 10px 10px 0; /* Rounded only on the right */
     z-index: 1000; /* Ensure it's above the map */
     transition: left 1.2s ease; /* Transition for smooth animation */
@@ -56,7 +58,7 @@ body {
 
 #layerContainer h2 {
     margin-bottom: 10px;
-    color: #000000; /* Primary blue color for headings */
+    color: rgb(232,230,227); /* Primary blue color for headings */
 }
 
 .button-container {
@@ -65,19 +67,19 @@ body {
 }
 
 #layerContainer button {
-    background-color: #cccccc;
-    color: #000000;
+    background-color: rgb(53,57,59);
+    color: rgb(232,230,227);
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     margin-bottom: 5px;
-    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    transition: background-color 0.3s ease; 
 }
 
 #layerContainer button:hover {
-    background-color: #979797; /* Darker blue on hover */
+    background-color: rgb(66,72,75); /* Darker blue on hover */
 }
 
 #selectorContainer {
@@ -90,6 +92,10 @@ body {
     margin-bottom: 5px;
 }
 
+select {
+    background-color: #181a1b;
+}
+
 #selectorContainer select {
     width: 100%;
     padding: 8px;
@@ -99,4 +105,24 @@ body {
 /* Animation for sliding in and out */
 #layerContainer.transition {
     transition: left 1.2s ease;
+}
+
+.leaflet-control-layers-expanded {
+    color: rgb(200, 195, 188) !important;
+    background-image: initial !important;
+    background-color: rgb(24, 26, 27) !important;
+}
+
+.leaflet-bar a {
+    background-color: rgb(24, 26, 27) !important;
+    border-bottom-color: rgb(62, 68, 70) !important;
+    text-decoration-color: initial !important;
+    color: rgb(232, 230, 227) !important;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background-image: initial !important;
+    background-color: rgb(24, 26, 27) !important;
+    color: rgb(200, 195, 188) !important;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 14px !important;
 }
