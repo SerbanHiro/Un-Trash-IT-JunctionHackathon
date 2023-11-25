@@ -459,7 +459,11 @@ document.getElementById('districtSelector').addEventListener('change', function 
     centerOnDistrict(selectedDistrict);
 });
 
+var coloredLayerGroup = L.layerGroup().addTo(map);
 function centerOnDistrict(districtName) {
+    // Clear the previous layers when selecting a new district
+    coloredLayerGroup.clearLayers();
+
     // Find the GeoJSON layer corresponding to the selected district
     let districtLayer = null;
     map.eachLayer(function (layer) {
@@ -472,7 +476,7 @@ function centerOnDistrict(districtName) {
     if (districtLayer) {
         map.fitBounds(districtLayer.getBounds());
         var bounds = districtLayer.getLatLngs(); // bounds is an array of LatLngs arrays
-        
+
         var geojsonFeature = districtLayer.toGeoJSON();
 
         // Create square grid subdivisions within the bounding box
@@ -482,9 +486,9 @@ function centerOnDistrict(districtName) {
         subdivisions.features.forEach(function (feature) {
             // Generate a random color (hex format)
             var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-        
+
             var coordinates = feature.geometry.coordinates;
-            var shouldShow = false; 
+            var shouldShow = false;
             coordinates.forEach(function (ring) {
                 ring.forEach(function (coord) {
                     var lat = coord[1];
@@ -494,7 +498,7 @@ function centerOnDistrict(districtName) {
                     }
                 });
             });
-        
+
             if (shouldShow) {
                 L.geoJSON(feature, {
                     style: function () {
@@ -505,12 +509,8 @@ function centerOnDistrict(districtName) {
                             weight: 1        // Border width
                         };
                     }
-                }).addTo(map);
+                }).addTo(coloredLayerGroup);
             }
         });
-        
-        
-
-        console.log(subdivisions);
     }
 }
