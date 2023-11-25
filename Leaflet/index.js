@@ -169,7 +169,7 @@ var recyclingCenters = [
     { lat: 47.5136105, lng: 19.150555, popup: 'Csomagolási és egyes veszélyes hulladékok - XIV. Füredi út 74.' },
     { lat: 47.4929718, lng: 19.1401832, popup: 'Csomagolási és egyes veszélyes hulladékok - X., Fehér köz 2.' },
     { lat: 47.4762887, lng: 19.2470695, popup: 'Csomagolási és egyes veszélyes hulladékok - XVII. Gyökér köz 4.' },
-    { lat: 47.4556777, lng: 19.1781252, popup: 'Csomagolási és egyes veszélyes hulladékok - VIII. Sárkány u. 5.' },
+    { lat: 47.485057, lng: 19.0909733, popup: 'Csomagolási és egyes veszélyes hulladékok - VIII. Sárkány u. 5.' },
     { lat: 47.4691658, lng: 19.0290053, popup: 'Csomagolási és egyes veszélyes hulladékok - XI., Bánk bán u. 8-10.' },
     { lat: 47.4681011, lng: 19.1061347, popup: 'Csomagolási és egyes veszélyes hulladékok - IX. Ecseri út 9.' },
     { lat: 47.4556777, lng: 19.1781252, popup: 'Csomagolási és egyes veszélyes hulladékok - XVIII. Jegenye fasor 15.' },
