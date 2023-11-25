@@ -413,22 +413,6 @@ function processGeoJSON(data) {
         var sumB = romanToInteger(b);
         return sumA > sumB;
     }
-
-    function centerOnDistrict(districtName) {
-        // Find the GeoJSON layer corresponding to the selected district
-        var districtLayer = null;
-        map.eachLayer(function (layer) {
-            if (layer.feature && layer.feature.properties.name == districtName) {
-                districtLayer = layer;
-            }
-        });
-
-        // If the district layer is found, fit the map to its bounds
-        if (districtLayer) {
-            console.log(districtLayer.feature.properties.population);
-            map.fitBounds(districtLayer.getBounds());
-        }
-    }
 }
 
 currentLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
