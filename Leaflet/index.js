@@ -58,9 +58,19 @@ function createMarkerCluster(markers, layerName) {
 
 
 var markersArrayGlass = [
-    { lat: 47.51, lng: 18.95, popup: 'Marker 1 Glass' },
-    { lat: 47.53, lng: 19.05, popup: 'Marker 2 Glass' },
-    { lat: 47.55, lng: 19.10, popup: 'Marker 3 Glass' }
+    { lat: 47.4844971, lng: 19.0841891, popup: 'üveggyűjtő sziget - VIII. kerület, Illés utca 32-vel szemben' },
+    { lat: 47.4862515, lng: 19.0793579, popup: 'üveggyűjtő sziget - VIII. kerület, Práter utca -Szigony utca sarok SPAR előtt' },
+    { lat: 47.4901467, lng: 19.0829748, popup: 'üveggyűjtő sziget - VIII. kerület, Dankó utca 23. - Magdolna utca sarok' },
+    { lat: 47.4929454, lng: 19.0764147, popup: 'üveggyűjtő sziget - VIII. kerület, Déry Miksa utca 19 előtt' },
+    { lat: 47.510058, lng: 19.1516588, popup: 'üveggyűjtő sziget - XIV. kerület, Gvadányi utca 29/a előtt' },
+    { lat: 47.5059865, lng: 19.1570735, popup: 'üveggyűjtő sziget - XIV. kerület, Cziráki u. -Szolnoki u. sarok' },
+    { lat: 47.5051122, lng: 19.1530935, popup: 'üveggyűjtő sziget - XIV. kerület, Ötvenes utca - Kerepesi út' },
+    { lat: 47.5540215, lng: 19.0814541, popup: 'üveggyűjtő sziget - XIII. kerület, Tomori utca 31-33. szám előtt' },
+    { lat: 47.5520885, lng: 19.0911671, popup: 'üveggyűjtő sziget - IV. kerület, Pozsonyi u. 2/b (remízzel szemben)' },
+    { lat: 47.5487262, lng: 19.0762637, popup: 'üveggyűjtő sziget - XIII. kerület, Gyöngyösi utca 11-gyel szemben' },
+    { lat: 47.5563918, lng: 19.1014851, popup: 'üveggyűjtő sziget - IV. kerület, Rózsa u. 9' },
+    { lat: 47.4945703, lng: 19.035157, popup: 'üveggyűjtő sziget - I. kerület, Gellérthegy u. - Orvos lépcső' },
+    { lat: 47.5268535, lng: 18.9804671, popup: 'üveggyűjtő sziget - II. kerület, Fekete István utca 11. - Szerb Antal utca' },
 ];
 
 var markersArrayHousehold = [
