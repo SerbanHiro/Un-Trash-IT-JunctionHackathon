@@ -134,7 +134,7 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
         var districtLayer = null;
         map.eachLayer(function (layer) {
             if(layer.feature != undefined) {
-                console.log(layer.feature.properties.name);
+                //console.log(layer.feature.properties.name);
             }
             if (layer.feature && layer.feature.properties.name == 'VIII. kerület') {
                 districtLayer = layer;
@@ -144,7 +144,7 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
             processGeoJSON(data);
             map.eachLayer(function (layer) {
                 if(layer.feature != undefined) {
-                    console.log(layer.feature.properties.name);
+                    //console.log(layer.feature.properties.name);
                 }
                 if (layer.feature && layer.feature.properties.name == 'VIII. kerület') {
                     districtLayer = layer;
@@ -411,6 +411,23 @@ $.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (
     processGeoJSON(data);
 });
 
+var parkLayer;
+$.getJSON('park.geojson', function (data) {
+    processParkGeoJSON(data);
+});
+function processParkGeoJSON(data) {
+    parkLayer = L.geoJSON(data, {
+        style: function (feature) {
+            return {
+                fill: false,
+                fillOpacity: 0
+            };
+        },
+        onEachFeature: function(feature) {
+        }
+    });
+}
+
 function processGeoJSON(data) {
     var districtSelector = document.getElementById('districtSelector');
     districtSelector.innerHTML = '';
@@ -562,8 +579,29 @@ function showDistrictGrid(districtLayer, index) {
         // Generate a random color (hex format)
         var color = '#' + Math.floor(Math.random()*16777215).toString(16);
 
-        // START POLLUTION INDEX 
-        if(index>=5) {
+        var coordinates = feature.geometry.coordinates;
+        var shouldShow = false;
+        var isPark=false; 
+        coordinates.forEach(function (ring) {
+            ring.forEach(function (coord) {
+                var lat = coord[1];
+                var lng = coord[0];
+                if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
+                    shouldShow = true;
+                }
+                parkLayer.eachLayer(function (layer) {
+                    if(isMarkerInsidePolygon(lat,lng,layer)) {
+                        isPark=true;
+                    }
+                });
+            });
+        });
+
+        // START POLLUTION INDEX
+        if(isPark) {
+            color="WHITE";
+        }
+        else if(index>=5) {
             color="RED";
         } else if(index>3) {
             color="BLUE";
@@ -572,24 +610,12 @@ function showDistrictGrid(districtLayer, index) {
         }
         // END 
 
-        var coordinates = feature.geometry.coordinates;
-        var shouldShow = false;
-        coordinates.forEach(function (ring) {
-            ring.forEach(function (coord) {
-                var lat = coord[1];
-                var lng = coord[0];
-                if (isMarkerInsidePolygon(lat, lng, districtLayer)) {
-                    shouldShow = true;
-                }
-            });
-        });
-
         if (shouldShow) {
             L.geoJSON(feature, {
                 style: function () {
                     return {
                         fillColor: color,
-                        fillOpacity: 0.5, // Adjust the fill opacity here
+                        fillOpacity: 0.8, // Adjust the fill opacity here
                         color: 'black',  // Border color
                         weight: 1        // Border width
                     };
