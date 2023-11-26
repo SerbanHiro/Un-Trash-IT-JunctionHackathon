@@ -576,7 +576,7 @@ function showDistrictGrid(districtLayer, index) {
 
     // Create square grid subdivisions within the bounding box
     var bbox = turf.bbox(geojsonFeature);
-    var subdivisions = turf.squareGrid(bbox, 1, { units: 'kilometers' }); // 0.095
+    var subdivisions = turf.squareGrid(bbox, 0.095, { units: 'kilometers' }); // 0.095
 
     var recyclingCenter=0;
     var squares=0;
@@ -661,7 +661,8 @@ function showDistrictGrid(districtLayer, index) {
 
         // RECYCLING CENTERS
         var recyclyingCentersPerDistrict = recyclingCenter;
-        var recyclyingCentersPerDistrictAvg = recyclingCenter/23; // 23 districts in Budapest
+        var recyclyingCentersPerDistrictAvg = recyclyingCentersPerDistrict/23; // 23 districts in Budapest
+        var recyclyingCentersIndex = (recyclyingCentersPerDistrict>recyclyingCentersPerDistrictAvg) ? recyclyingCentersPerDistrict+0.05 : 0.25;
 
         // PICKING TRASH
         var timePeriodOfPickingTrash = 3; // for district 8
@@ -680,7 +681,7 @@ function showDistrictGrid(districtLayer, index) {
             case 'recyclable-garbage':
                 popup="Recyclable Garbage Per Square: "+recyclableGarbageDumpsterPerSquare;
         }
-        console.log(popup);
+        //console.log(popup);
 
         
 
