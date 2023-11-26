@@ -607,10 +607,16 @@ function showDistrictGrid(districtLayer, index) {
         }
     });
 
-    var districtsTrashTime=[3,2,1,3,3,3,3,3,3,2,2,1,2,2,1,1,1,2,1,1,1,1,2,1];
-    var sum=0;
-    districtsTrashTime.forEach(function (number) {
-        sum+=number;
+    var districtsHouseholdTrashTime=[3,2,1,3,3,3,3,3,2,2,1,2,2,1,1,1,2,1,1,1,1,2,1];
+    var sumHousehold=0;
+    districtsHouseholdTrashTime.forEach(function (number) {
+        sumHousehold+=number;
+    });
+
+    var districtsRecyclableTrashTime=[1,1,1,0.25,1,1,1,1,1,1,1,1,1,1,1,0.25,0.25,0.25,1,1,0.25,0.25,1];
+    var sumRecyclable=0;
+    districtsRecyclableTrashTime.forEach(function (number) {
+        sumRecyclable+=number;
     });
 
     subdivisions.features.forEach(function (feature) {
@@ -644,20 +650,24 @@ function showDistrictGrid(districtLayer, index) {
         var numberOfGeneratedSquares = squares;
 
         // POPULATION
+        var constant = Math.floor(Math.random() * 101);
         var populationOfDistrict = districtLayer.feature.properties.population;
-        var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares;
+        var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares + ((-1) ** getRandomInt(0,1)) * constant;
 
         // GLASS
         var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon);
         var glassDumpsterPerSquareAvg = glassDumpsterPerSquare/numberOfGeneratedSquares;
+        var glassDumpsterIndex = 1+(glassDumpsterPerSquare-glassDumpsterPerSquareAvg);
 
         // HOUSEHOLD GARBAGE
         var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon);
         var householdGarbageDumpsterPerSquareAvg = householdGarbageDumpsterPerSquare/numberOfGeneratedSquares;
+        var householdGarbageDumpsterIndex = 1+(householdGarbageDumpsterPerSquare-householdGarbageDumpsterPerSquareAvg);
 
         // RECYCLABLE GARBAGE
         var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon);
         var recyclableGarbageDumpsterPerSquareAvg = recyclableGarbageDumpsterPerSquare/numberOfGeneratedSquares;
+        var recyclableGarbageDumpsterIndex = 1+(recyclableGarbageDumpsterPerSquare-recyclableGarbageDumpsterPerSquareAvg);
 
         // RECYCLING CENTERS
         var recyclyingCentersPerDistrict = recyclingCenter;
@@ -665,9 +675,20 @@ function showDistrictGrid(districtLayer, index) {
         var recyclyingCentersIndex = (recyclyingCentersPerDistrict>recyclyingCentersPerDistrictAvg) ? recyclyingCentersPerDistrict+0.05 : 0.25;
 
         // PICKING TRASH
-        var timePeriodOfPickingTrash = 3; // for district 8
-        var timePeriodOfPickingTrashAvg = sum/23; 
-        var timePickingTrashIndex = 1+(timePeriodOfPickingTrash-timePeriodOfPickingTrashAvg);
+        var timePeriodOfPickingHouseholdTrash = 3; // for district 8
+        var timePeriodOfPickingHouseholdTrashAvg = sumHousehold/23; 
+        var timePickingTrashIndex = 1+(timePeriodOfPickingHouseholdTrash-timePeriodOfPickingHouseholdTrashAvg);
+
+        var timePeriodOfPickingHouseholdTrash = 1; // for district 8
+        var timePeriodOfPickingHouseholdTrashAvg = sumRecyclable/23; 
+        var timePickingTrashIndex = 1+(timePeriodOfPickingHouseholdTrash-timePeriodOfPickingHouseholdTrashAvg);
+
+        //COLOURING INDEX
+
+        var finalColouringIndexGlass = populationOfGeneratedSquare/(glassDumpsterPerSquare*recyclyingCentersIndex*glassDumpsterIndex);
+        // var finalColouringIndexGarbage = ;
+        // var finalColouringIndexRecyclable = ;
+    
 
         var trashType=currentTrashType;
         var popup=""; 
@@ -730,4 +751,10 @@ function getNumberOfObjectsPerSquare(layerName,polygon) {
         }
     });
     return temp;
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
