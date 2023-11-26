@@ -154,7 +154,7 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
         //console.log(districtLayer);
         if (districtLayer) {
             // Example: Generate 5 random coordinates and add them to the existing array
-            generateRandomCoordinatesInFeature(1000, districtLayer, markersArrayHousehold);
+            generateRandomCoordinatesInFeature(200, districtLayer, markersArrayHousehold);
             createMarkerCluster(markersArrayHousehold, 'household-garbage');
             createMarkerCluster(markersArrayHousehold, 'household-garbage-region');
             generateRandomCoordinatesInFeature(200, districtLayer, markersArrayRecyclable);
@@ -620,9 +620,6 @@ function showDistrictGrid(districtLayer, index) {
     });
 
     subdivisions.features.forEach(function (feature) {
-        // Generate a random color (hex format)
-        var color = '#' + Math.floor(Math.random()*16777215).toString(16);
-
         var coordinates = feature.geometry.coordinates;
         var shouldShow = false;
         var isPark=false; 
@@ -650,22 +647,22 @@ function showDistrictGrid(districtLayer, index) {
         var numberOfGeneratedSquares = squares;
 
         // POPULATION
-        var constant = Math.floor(Math.random() * 101);
+        //var constant = Math.floor(Math.random() * 101);
         var populationOfDistrict = districtLayer.feature.properties.population;
-        var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares + ((-1) ** getRandomInt(0,1)) * constant;
+        var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares;// + ((-1) ** getRandomInt(0,1)) * constant;
 
         // GLASS
-        var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon);
+        var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon,350);
         var glassDumpsterPerSquareAvg = glassDumpsterPerSquare/numberOfGeneratedSquares;
         var glassDumpsterIndex = 1+(glassDumpsterPerSquare-glassDumpsterPerSquareAvg);
 
         // HOUSEHOLD GARBAGE
-        var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon);
+        var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon,125);
         var householdGarbageDumpsterPerSquareAvg = householdGarbageDumpsterPerSquare/numberOfGeneratedSquares;
         var householdGarbageDumpsterIndex = 1+(householdGarbageDumpsterPerSquare-householdGarbageDumpsterPerSquareAvg);
 
         // RECYCLABLE GARBAGE
-        var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon);
+        var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon,125);
         var recyclableGarbageDumpsterPerSquareAvg = recyclableGarbageDumpsterPerSquare/numberOfGeneratedSquares;
         var recyclableGarbageDumpsterIndex = 1+(recyclableGarbageDumpsterPerSquare-recyclableGarbageDumpsterPerSquareAvg);
 
@@ -685,10 +682,17 @@ function showDistrictGrid(districtLayer, index) {
 
         //COLOURING INDEX
 
-        var finalColouringIndexGlass = populationOfGeneratedSquare/(glassDumpsterPerSquare*recyclyingCentersIndex*glassDumpsterIndex);
-        // var finalColouringIndexGarbage = ;
-        // var finalColouringIndexRecyclable = ;
-    
+        var finalColouringIndexGlass = populationOfGeneratedSquare/(glassDumpsterPerSquare+recyclyingCentersIndex+glassDumpsterIndex)/100;
+        var finalColouringIndexGarbage = populationOfGeneratedSquare/(householdGarbageDumpsterPerSquare+recyclyingCentersIndex+householdGarbageDumpsterIndex)/100;
+        var finalColouringIndexRecyclable = populationOfGeneratedSquare/(recyclableGarbageDumpsterPerSquare+recyclyingCentersIndex+recyclableGarbageDumpsterIndex)/100;
+
+        // console.log("~~~~~");
+        // console.log("FINAL: "+finalColouringIndexGlass);
+        // console.log("Population: "+populationOfGeneratedSquare);
+        // console.log("Glass Dumpster Per Square: "+glassDumpsterPerSquare);
+        // console.log("Centers Index: "+recyclyingCentersIndex);
+        // console.log("Glass Inedx: "+glassDumpsterIndex);
+        // console.log("~~~~~");
 
         var trashType=currentTrashType;
         var popup=""; 
@@ -715,16 +719,45 @@ function showDistrictGrid(districtLayer, index) {
         *                                  - recyclyingCentersPerDistrictAvg = recyclyingCentersTotal/numberOfDistricts, -recyclyingCentersPerDistrict
         *                                  - timePeriodOfPickingTrashAvg, -timePeriodOfPickingTrash
         */
+        // END 
+
+        var color = "BLUE";
+
         if(isPark) {
             color="WHITE";
-        } else if(index>=5) {
-            color="RED";
-        } else if(index>3) {
-            color="BLUE";
         } else {
-            color="GREEN";
+            switch(trashType) {
+                case 'glass':
+                    if(finalColouringIndexGlass>0.4) {
+                        color="RED";
+                    } else if(finalColouringIndexGlass>0.2) {
+                        color="ORANGE";
+                    } else {
+                        color="GREEN";
+                    }
+                    break;
+                case 'household-garbage':
+                    if(finalColouringIndexGarbage>0.4) {
+                        color="RED";
+                    } else if(finalColouringIndexGarbage>0.2) {
+                        color="ORANGE";
+                    } else {
+                        color="GREEN";
+                    }
+                    break;
+                case 'recyclable-garbage':
+                    if(finalColouringIndexRecyclable>0.4) {
+                        color="RED";
+                    } else if(finalColouringIndexRecyclable>0.2) {
+                        color="ORANGE";
+                    } else {
+                        color="GREEN";
+                    }
+                    break;
+                default:
+                    color="BLUE";
+            }
         }
-        // END 
 
         if (shouldShow) {
             L.geoJSON(feature, {
@@ -732,8 +765,8 @@ function showDistrictGrid(districtLayer, index) {
                     return {
                         fillColor: color,
                         fillOpacity: 0.8, // Adjust the fill opacity here
-                        color: 'black',  // Border color
-                        weight: 1        // Border width
+                        color: 'white',  // Border color
+                        weight: 0.2       // Border width
                     };
                 }
             }).addTo(coloredLayerGroup).bindPopup(popup);
@@ -741,17 +774,39 @@ function showDistrictGrid(districtLayer, index) {
     });
 }
 
-function getNumberOfObjectsPerSquare(layerName,polygon) {
-    var temp=0;
+function getNumberOfObjectsPerSquare(layerName, polygon, radius) {
+    var temp = 0;
     map.markerClusters[layerName].eachLayer(function (marker) {
-        var lat=marker.getLatLng().lat;
-        var lng=marker.getLatLng().lng;
-        if(isMarkerInsidePolygon(lat,lng,polygon)) {
+        // Check if the marker has a valid LatLng object
+        var markerLatLng = marker.getLatLng();
+        if (!markerLatLng) {
+            return; // Skip this marker if it doesn't have a valid LatLng
+        }
+
+        var lat = markerLatLng.lat;
+        var lng = markerLatLng.lng;
+
+        // Check if the marker is within the specified radius of the polygon
+        if (isMarkerNearPolygon(lat, lng, polygon, radius)) {
             ++temp;
         }
     });
     return temp;
 }
+
+function isMarkerNearPolygon(lat, lng, polygon, radius) {
+    // Check if the marker is inside the polygon
+    if (isMarkerInsidePolygon(lat, lng, polygon)) {
+        return true;
+    }
+
+    // If the marker is not inside the polygon, check if it's within the specified radius
+    var markerLatLng = L.latLng(lat, lng);
+
+    return markerLatLng.distanceTo(polygon.getLatLngs()[0][0]) <= radius;
+}
+
+
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
