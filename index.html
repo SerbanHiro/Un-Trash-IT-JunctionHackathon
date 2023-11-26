@@ -27,12 +27,42 @@
             <select id="districtSelector"></select>
         </div>
     </div>
+    
     <div id="gliding-container">
-        <div id="content">
+        <div id="content-glide">
             <span id="close-btn" onclick="closeContainer()">X</span>
-            <h2>Hello, this is your gliding container!</h2>
-            <!-- Your content goes here -->
+            <h2>Legend</h2>
         </div>
+        <div id="color-squares-container">
+            <div class="legend-item">
+                <div class="color-square" style="background-color: #E6080d;"></div>
+                <span class="legend-text">Not enough dumpsters/High pollution</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-square" style="background-color: #ff6e6e;"></div>
+                <span class="legend-text">Moderate Pollution</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-square" style="background-color: #ffaa66;"></div>
+                <span class="legend-text">Low Pollution</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-square" style="background-color: #ffcc99;"></div>
+                <span class="legend-text">Very Low Pollution</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-square" style="background-color: #fff2cc;"></div>
+                <span class="legend-text">Enough dumpsters/No Pollution</span>
+            </div>
+        </div>
+        <button id="reopen-btn" onclick="reopenContainer()">&#10094;</button>
+    </div>
+
+    <div id="top-container">
+        <div id="content-top">
+            <span id="close-btn-top" onclick="closeTopContainer()">X</span>
+        </div>
+        <button id="open-btn-top" onclick="openTopContainerByButton()">&#129139;</button>
     </div>
     
 

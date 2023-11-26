@@ -417,11 +417,43 @@ function openContainer() {
     var layerContainerRight = document.getElementById('gliding-container');
     layerContainerRight.classList.add('show');
 }
+function closeContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.remove('show');
+    layerContainerRight.classList.add('hide');
+}
+
+function reopenContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.remove('hide');
+    layerContainerRight.classList.add('show');
+}
+
+function openTopContainer() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.add('show');
+}
+function closeTopContainer() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.remove('open');
+    layerContainerTop.classList.add('show');
+}
+
+function openTopContainerByButton() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.remove('show');
+    layerContainerTop.classList.add('open');
+}
+
+
+
+
+
 
 // Execute the animation when the page loads
 animateLayerContainer();
-
 openContainer();
+openTopContainer();
 
 $.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (data) {
     processGeoJSON(data);

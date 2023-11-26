@@ -132,24 +132,34 @@ body {
     overflow: hidden;
 }
 
+
 #gliding-container {
-    position: fixed;
-    bottom: 100px;
-    right: -300px; /* Start off-screen */
-    width: 300px;
-    height: 200px;
-    background-color: #3498db;
+    position: absolute;
+    bottom: 69px;
+    right: -450px;
+    height: 400px;
+    width: 400px;
+    background-color: rgb(27, 30, 31);
+    border: 1px solid rgb(60, 65, 68);
+    border-radius: 10px 0 0 10px;
+    z-index: 1000;
     transition: right 1.2s ease-in-out;
-    z-index: 1000; /* Adjust this value to be higher than the map's z-index */
 }
 
 #gliding-container.show {
-    right: 0; /* Slide in */
+    right: 0px; /* Slide in */
 }
 
-#content {
-    padding: 20px;
+#gliding-container.hide {
+    right: -350px; /*slide out but just as much as needed*/
+}
+
+#content-glide {
+    padding: 10px;
+    text-align: center;
     color: #fff;
+    padding-left: 10px;
+    padding-bottom: 0px;
 }
 
 #close-btn {
@@ -161,8 +171,93 @@ body {
     font-size: 18px;
 }
 
+#reopen-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+}
+
 #layerContainerRight.transition {
     transition: left 1.2s ease;
 }
 
+#color-squares-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align squares to the left */
+    padding-left: 10px;
+}
 
+.color-square {
+    display: flex;
+    align-items: center; /* Align text vertically in the middle */
+    width: 25px;
+    height: 25px;
+    margin-right: 10px; /* Adjust the margin as needed */
+    border: 1px solid #000;
+}
+
+.legend-text {
+    margin-left: 5px; /* Adjust the margin as needed */
+    white-space: nowrap;
+}
+
+
+#top-container {
+    position: fixed;
+    top: -1050px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1000px;
+    width: 1450px;
+    background-color: rgb(27, 30, 31);
+    border: 1px solid rgb(60, 65, 68);
+    border-radius: 0 0 10px 10px;
+    z-index: 1000;
+    transition: top 1.2s ease-in-out;
+}
+
+#top-container.show {
+    top: -950px;
+}
+#top-container.open {
+    top: 0px;
+}
+
+#top-container.hide {
+    top: -950px;
+}
+
+#content-top {
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+    padding-left: 10px;
+    padding-bottom: 0px;
+}
+
+#close-btn-top {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 18px;
+}
+
+#open-btn-top {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+}
