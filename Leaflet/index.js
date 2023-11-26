@@ -695,8 +695,7 @@ function showDistrictGrid(districtLayer, index) {
         */
         if(isPark) {
             color="WHITE";
-        }
-        else if(index>=5) {
+        } else if(index>=5) {
             color="RED";
         } else if(index>3) {
             color="BLUE";
