@@ -75,7 +75,7 @@ html, body, input, textarea, select, button {
     cursor: pointer;
     font-size: 16px;
     margin-bottom: 5px;
-    transition: background-color 0.3s ease; 
+    transition: background-color 1.2s ease; 
 }
 
 #layerContainer button:hover {
@@ -139,7 +139,7 @@ body {
     width: 300px;
     height: 200px;
     background-color: #3498db;
-    transition: right 0.3s ease-in-out;
+    transition: right 1.2s ease-in-out;
     z-index: 1000; /* Adjust this value to be higher than the map's z-index */
 }
 
