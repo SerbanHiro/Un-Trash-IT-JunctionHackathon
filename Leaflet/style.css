@@ -126,3 +126,43 @@ select {
     color: rgb(200, 195, 188) !important;
     box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 14px !important;
 }
+
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+#gliding-container {
+    position: fixed;
+    bottom: 100px;
+    right: -300px; /* Start off-screen */
+    width: 300px;
+    height: 200px;
+    background-color: #3498db;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000; /* Adjust this value to be higher than the map's z-index */
+}
+
+#gliding-container.show {
+    right: 0; /* Slide in */
+}
+
+#content {
+    padding: 20px;
+    color: #fff;
+}
+
+#close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 18px;
+}
+
+#layerContainerRight.transition {
+    transition: left 1.2s ease;
+}
+
+

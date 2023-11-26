@@ -160,10 +160,10 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
         //console.log(districtLayer);
         if (districtLayer) {
             // Example: Generate 5 random coordinates and add them to the existing array
-            generateRandomCoordinatesInFeature(200, districtLayer, markersArrayHousehold);
+            generateRandomCoordinatesInFeature(250, districtLayer, markersArrayHousehold);
             createMarkerCluster(markersArrayHousehold, 'household-garbage');
             createMarkerCluster(markersArrayHousehold, 'household-garbage-region');
-            generateRandomCoordinatesInFeature(200, districtLayer, markersArrayRecyclable);
+            generateRandomCoordinatesInFeature(100, districtLayer, markersArrayRecyclable);
             createMarkerCluster(markersArrayRecyclable, 'recyclable-garbage');
             createMarkerCluster(markersArrayRecyclable, 'recyclable-garbabe-region');
         } else {
@@ -413,8 +413,15 @@ function animateLayerContainer() {
     layerContainer.classList.add('here');
 }
 
+function openContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.add('show');
+}
+
 // Execute the animation when the page loads
 animateLayerContainer();
+
+openContainer();
 
 $.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (data) {
     processGeoJSON(data);
@@ -658,17 +665,17 @@ function showDistrictGrid(districtLayer, index) {
         var populationOfGeneratedSquare = populationOfDistrict/numberOfGeneratedSquares;// + ((-1) ** getRandomInt(0,1)) * constant;
 
         // GLASS
-        var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon,350);
+        var glassDumpsterPerSquare = getNumberOfObjectsPerSquare('glass-region',polygon,300);
         var glassDumpsterPerSquareAvg = glassDumpsterPerSquare/numberOfGeneratedSquares;
         var glassDumpsterIndex = 1+(glassDumpsterPerSquare-glassDumpsterPerSquareAvg);
 
         // HOUSEHOLD GARBAGE
-        var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon,125);
+        var householdGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('household-garbage',polygon,135);
         var householdGarbageDumpsterPerSquareAvg = householdGarbageDumpsterPerSquare/numberOfGeneratedSquares;
         var householdGarbageDumpsterIndex = 1+(householdGarbageDumpsterPerSquare-householdGarbageDumpsterPerSquareAvg);
 
         // RECYCLABLE GARBAGE
-        var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon,125);
+        var recyclableGarbageDumpsterPerSquare = getNumberOfObjectsPerSquare('recyclable-garbage',polygon,135);
         var recyclableGarbageDumpsterPerSquareAvg = recyclableGarbageDumpsterPerSquare/numberOfGeneratedSquares;
         var recyclableGarbageDumpsterIndex = 1+(recyclableGarbageDumpsterPerSquare-recyclableGarbageDumpsterPerSquareAvg);
 
@@ -680,17 +687,17 @@ function showDistrictGrid(districtLayer, index) {
         // PICKING TRASH
         var timePeriodOfPickingHouseholdTrash = 3; // for district 8
         var timePeriodOfPickingHouseholdTrashAvg = sumHousehold/23; 
-        var timePickingTrashIndex = 1+(timePeriodOfPickingHouseholdTrash-timePeriodOfPickingHouseholdTrashAvg);
+        var timePickingHouseholdTrashIndex = 1+(timePeriodOfPickingHouseholdTrash-timePeriodOfPickingHouseholdTrashAvg);
 
-        var timePeriodOfPickingHouseholdTrash = 1; // for district 8
-        var timePeriodOfPickingHouseholdTrashAvg = sumRecyclable/23; 
-        var timePickingTrashIndex = 1+(timePeriodOfPickingHouseholdTrash-timePeriodOfPickingHouseholdTrashAvg);
+        var timePeriodOfPickingRecyclableTrash = 1; // for district 8
+        var timePeriodOfPickingRecyclableTrashAvg = sumRecyclable/23; 
+        var timePickingRecyclableTrashIndex = 1+(timePeriodOfPickingRecyclableTrash-timePeriodOfPickingRecyclableTrashAvg);
 
         //COLOURING INDEX
 
-        var finalColouringIndexGlass = populationOfGeneratedSquare/(glassDumpsterPerSquare+recyclyingCentersIndex+glassDumpsterIndex)/100;
-        var finalColouringIndexGarbage = populationOfGeneratedSquare/(householdGarbageDumpsterPerSquare+recyclyingCentersIndex+householdGarbageDumpsterIndex)/100;
-        var finalColouringIndexRecyclable = populationOfGeneratedSquare/(recyclableGarbageDumpsterPerSquare+recyclyingCentersIndex+recyclableGarbageDumpsterIndex)/100;
+        var finalColouringIndexGlass = (populationOfGeneratedSquare/(glassDumpsterPerSquare+recyclyingCentersIndex+glassDumpsterIndex))/100;
+        var finalColouringIndexGarbage = (populationOfGeneratedSquare/(householdGarbageDumpsterPerSquare+recyclyingCentersIndex+householdGarbageDumpsterIndex))*timePickingHouseholdTrashIndex/100;
+        var finalColouringIndexRecyclable = (populationOfGeneratedSquare/(recyclableGarbageDumpsterPerSquare+recyclyingCentersIndex+recyclableGarbageDumpsterIndex))*timePickingRecyclableTrashIndex/100;
 
         // console.log("~~~~~");
         // console.log("FINAL: "+finalColouringIndexGlass);
@@ -726,39 +733,53 @@ function showDistrictGrid(districtLayer, index) {
         *                                  - timePeriodOfPickingTrashAvg, -timePeriodOfPickingTrash
         */
         // END 
+        
+        console.log(finalColouringIndexGlass);
 
         var color = "BLUE";
 
         if(isPark) {
-            color="WHITE";
+            color="#d6d6d6";
         } else {
             switch(trashType) {
                 case 'glass':
-                    if(finalColouringIndexGlass>0.4) {
-                        color="RED";
-                    } else if(finalColouringIndexGlass>0.2) {
-                        color="ORANGE";
+                    if (finalColouringIndexGlass > 0.4) {
+                        color = "#E6080d"; // Red
+                    } else if (finalColouringIndexGlass > 0.3) {
+                        color = "#ff6e6e";
+                    } else if (finalColouringIndexGlass > 0.2) {
+                        color = "#ffaa66"; // Orange
+                    } else if (finalColouringIndexGlass > 0.1) {
+                        color = "#ffcc99"; // Yellow
                     } else {
-                        color="GREEN";
+                        color = "#fff2cc"; // Pale Yellow
                     }
                     break;
                 case 'household-garbage':
-                    if(finalColouringIndexGarbage>0.4) {
-                        color="RED";
-                    } else if(finalColouringIndexGarbage>0.2) {
-                        color="ORANGE";
+                    if (finalColouringIndexGarbage > 0.6) {
+                        color = "#E6080d"; // Red
+                    } else if (finalColouringIndexGarbage > 0.5) {
+                        color = "#ff6e6e";
+                    } else if (finalColouringIndexGarbage > 0.4) {
+                        color = "#ffaa66"; // Orange
+                    } else if (finalColouringIndexGarbage > 0.3) {
+                        color = "#ffcc99"; // Yellow
                     } else {
-                        color="GREEN";
+                        color = "#fff2cc"; // Pale Yellow
                     }
                     break;
                 case 'recyclable-garbage':
-                    if(finalColouringIndexRecyclable>0.4) {
-                        color="RED";
-                    } else if(finalColouringIndexRecyclable>0.2) {
-                        color="ORANGE";
+                    if (finalColouringIndexRecyclable > 0.4) {
+                        color = "#E6080d"; // Red
+                    } else if (finalColouringIndexRecyclable > 0.3) {
+                        color = "#ff6e6e";
+                    } else if (finalColouringIndexRecyclable > 0.2) {
+                        color = "#ffaa66"; // Orange
+                    } else if (finalColouringIndexRecyclable > 0.1) {
+                        color = "#ffcc99"; // Yellow
                     } else {
-                        color="GREEN";
-                    }
+                        color = "#fff2cc"; // Pale Yellow
+                    } 
                     break;
                 default:
                     color="BLUE";
@@ -770,9 +791,9 @@ function showDistrictGrid(districtLayer, index) {
                 style: function () {
                     return {
                         fillColor: color,
-                        fillOpacity: 0.8, // Adjust the fill opacity here
+                        fillOpacity: 0.7, // Adjust the fill opacity here
                         color: 'white',  // Border color
-                        weight: 0.2       // Border width
+                        weight: 0.1       // Border width
                     };
                 }
             }).addTo(coloredLayerGroup).bindPopup(popup);
@@ -809,7 +830,10 @@ function isMarkerNearPolygon(lat, lng, polygon, radius) {
     // If the marker is not inside the polygon, check if it's within the specified radius
     var markerLatLng = L.latLng(lat, lng);
 
-    return markerLatLng.distanceTo(polygon.getLatLngs()[0][0]) <= radius;
+    return markerLatLng.distanceTo(polygon.getLatLngs()[0][0]) <= radius ||
+    markerLatLng.distanceTo(polygon.getLatLngs()[0][1]) <= radius ||
+    markerLatLng.distanceTo(polygon.getLatLngs()[0][2]) <= radius ||
+    markerLatLng.distanceTo(polygon.getLatLngs()[0][3]) <= radius ;
 }
 
 
