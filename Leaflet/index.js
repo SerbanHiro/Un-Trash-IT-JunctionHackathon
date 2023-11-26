@@ -56,29 +56,6 @@ function createMarkerCluster(markers, layerName) {
     map.markerClusters[layerName] = markerCluster; // Save the marker cluster in a map object
 }
 
-
-var markersArrayGlass = [
-    { lat: 47.4844971, lng: 19.0841891, popup: 'üveggyűjtő sziget - VIII. kerület, Illés utca 32-vel szemben' },
-    { lat: 47.4862515, lng: 19.0793579, popup: 'üveggyűjtő sziget - VIII. kerület, Práter utca -Szigony utca sarok SPAR előtt' },
-    { lat: 47.4901467, lng: 19.0829748, popup: 'üveggyűjtő sziget - VIII. kerület, Dankó utca 23. - Magdolna utca sarok' },
-    { lat: 47.4929454, lng: 19.0764147, popup: 'üveggyűjtő sziget - VIII. kerület, Déry Miksa utca 19 előtt' },
-
-    { lat: 47.494037, lng: 19.0796845, popup: 'üveggyűjtő sziget - VIII. kerület, Vay Ádám utca - Alföldi utca' },
-    { lat: 47.4912433, lng: 19.1050119, popup: 'üveggyűjtő sziget - VIII. kerület, Törökbecse utcában, sport utcában' },
-    { lat: 47.4767744, lng: 19.0989147, popup: 'üveggyűjtő sziget - VIII. kerület, Győrffy István utca 24-gyel szemben' },
-    { lat: 47.4786036, lng: 19.0944534, popup: 'üveggyűjtő sziget - VIII. kerület, Rezső tér 16-tal szemben' },
-    
-];
-
-var markersArrayHousehold = [
-    { lat: 47.489059, lng: 19.1073802, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Lokomotív utca - Tbiliszi (voltVagon) tér (a templom mögött)' },
-    { lat: 47.4924047, lng: 19.1085199, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hungária krt. 12-14. előtt' },
-    { lat: 47.4924274, lng: 19.1062718, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Ciprus u. - Törökbecse u. új társasházzal szemben' },
-    { lat: 47.495918, lng: 19.107533, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hős utca 9-11. (Penny Market parkolóval szemben)' },
-    { lat: 47.4973672, lng: 19.1045862, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Stróbl Alajos utca 7. - Strázsa utca sarok' },
-    { lat: 47.4822384, lng: 19.0915241, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
-];
-
 function isMarkerInsidePolygon(randomLat,randomLng, poly) {
     var polyPoints = poly.getLatLngs();
     var x = randomLat, y = randomLng;
@@ -105,6 +82,29 @@ function isMarkerInsidePolygon(randomLat,randomLng, poly) {
     // console.log(inside);
     // console.log('~~~');
     return inside;
+}
+
+$.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (data) {
+    processGeoJSON(data);
+});
+
+var parkLayer;
+$.getJSON('park.geojson', function (data) {
+    processParkGeoJSON(data);
+});
+
+function processParkGeoJSON(data, callback) {
+    parkLayer = L.geoJSON(data, {
+        style: function (feature) {
+            return {
+                fill: false,
+                fillOpacity: 0
+            };
+        },
+        onEachFeature: function (feature) {
+            // Additional processing for each feature if needed
+        }
+    });
 }
 
 // Load GeoJSON data using Fetch API
@@ -135,7 +135,6 @@ fetch('hungary_administrative_boundaries_level9_polygon.geojson')
         }
         //console.log(districtLayer);
         if (districtLayer) {
-            // Example: Generate 5 random coordinates and add them to the existing array
             generateRandomCoordinatesInFeature(250, districtLayer, markersArrayHousehold);
             createMarkerCluster(markersArrayHousehold, 'household-garbage');
             createMarkerCluster(markersArrayHousehold, 'household-garbage-region');
@@ -155,6 +154,28 @@ var markersArrayRecyclable = [
     { lat: 47.495918, lng: 19.107533, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Hős utca 9-11. (Penny Market parkolóval szemben)' },
     { lat: 47.4973672, lng: 19.1045862, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Stróbl Alajos utca 7. - Strázsa utca sarok' },
     { lat: 47.4822384, lng: 19.0915241, popup: 'újrahasznosítható hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
+];
+
+var markersArrayGlass = [
+    { lat: 47.4844971, lng: 19.0841891, popup: 'üveggyűjtő sziget - VIII. kerület, Illés utca 32-vel szemben' },
+    { lat: 47.4862515, lng: 19.0793579, popup: 'üveggyűjtő sziget - VIII. kerület, Práter utca -Szigony utca sarok SPAR előtt' },
+    { lat: 47.4901467, lng: 19.0829748, popup: 'üveggyűjtő sziget - VIII. kerület, Dankó utca 23. - Magdolna utca sarok' },
+    { lat: 47.4929454, lng: 19.0764147, popup: 'üveggyűjtő sziget - VIII. kerület, Déry Miksa utca 19 előtt' },
+
+    { lat: 47.494037, lng: 19.0796845, popup: 'üveggyűjtő sziget - VIII. kerület, Vay Ádám utca - Alföldi utca' },
+    { lat: 47.4912433, lng: 19.1050119, popup: 'üveggyűjtő sziget - VIII. kerület, Törökbecse utcában, sport utcában' },
+    { lat: 47.4767744, lng: 19.0989147, popup: 'üveggyűjtő sziget - VIII. kerület, Győrffy István utca 24-gyel szemben' },
+    { lat: 47.4786036, lng: 19.0944534, popup: 'üveggyűjtő sziget - VIII. kerület, Rezső tér 16-tal szemben' },
+    
+];
+
+var markersArrayHousehold = [
+    { lat: 47.489059, lng: 19.1073802, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Lokomotív utca - Tbiliszi (voltVagon) tér (a templom mögött)' },
+    { lat: 47.4924047, lng: 19.1085199, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hungária krt. 12-14. előtt' },
+    { lat: 47.4924274, lng: 19.1062718, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Ciprus u. - Törökbecse u. új társasházzal szemben' },
+    { lat: 47.495918, lng: 19.107533, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Hős utca 9-11. (Penny Market parkolóval szemben)' },
+    { lat: 47.4973672, lng: 19.1045862, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Stróbl Alajos utca 7. - Strázsa utca sarok' },
+    { lat: 47.4822384, lng: 19.0915241, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
 ];
 
 var recyclingCenters = [
@@ -226,8 +247,6 @@ createMarkerCluster(markersArrayGlass, 'glass');
 createMarkerCluster(markersArrayGlass, 'glass-region');
 
 var currentLayer;
-
-// Add an event listener for the districtSelector change event
 document.getElementById('districtSelector').addEventListener('change', function () {
     const selectedDistrict = this.value;
     coloredLayerGroup.clearLayers();
@@ -384,91 +403,29 @@ function reupdateMap(layer) {
     currentLayer.addTo(map);
 }
 
-$.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (data) {
-    processGeoJSON(data);
-});
-
-var parkLayer;
-function onParkLayerLoad() {
-    console.log('Park layer has loaded');
-    // You can call generateRandomCoordinatesInFeature here or do other tasks
-}
-
-function checkParkLayerLoaded(resolve) {
-    if (parkLayer && parkLayer.getLayers().length > 0) {
-        console.log('Park layer is loaded.');
-        if(resolve!=undefined) {
-            resolve();
-        }
-    }
-}
-
-$.getJSON('park.geojson', function (data) {
-    processParkGeoJSON(data, onParkLayerLoad);
-});
-
-function processParkGeoJSON(data, callback) {
-    parkLayer = L.geoJSON(data, {
-        style: function (feature) {
-            return {
-                fill: false,
-                fillOpacity: 0
-            };
-        },
-        onEachFeature: function (feature) {
-            // Additional processing for each feature if needed
-        }
-    });
-
-    checkParkLayerLoaded();
-
-    // Use setInterval to periodically check if the park layer is loaded
-    var intervalId = setInterval(function () {
-        checkParkLayerLoaded(function () {
-            clearInterval(intervalId); // Stop the interval once the park layer is loaded
-            callback();
-        });
-    }, 100);
-}
-
-async function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddTo) {
-    // Wait for parkLayer to be loaded
-    await new Promise((resolve) => {
-        checkParkLayerLoaded(resolve);
-    });
-
-    if (!parkLayer || parkLayer.getLayers().length === 0) {
-        console.error('Park layer is not loaded properly. Skipping coordinate check.');
-        return; // or handle it in some way appropriate to your application
-    }
-
+function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddTo) {
     const bounds = feature.getBounds();
-    var sw = bounds.getSouthWest();
-    var ne = bounds.getNorthEast();
+    var sw=bounds.getSouthWest();
+    var ne=bounds.getNorthEast();
 
     for (var i = 0; i < numCoordinates; i++) {
-        var randomLat = Math.random() * (ne.lat - sw.lat) + sw.lat;
-        var randomLng = Math.random() * (ne.lng - sw.lng) + sw.lng;
-
-        var isNotInPark = true;
-
+        var randomLat = Math.random() * (ne.lat - sw.lat) +sw.lat;
+        var randomLng = Math.random() * (ne.lng - sw.lng) +sw.lng;
+        var isNotInPark=true;
         parkLayer.eachLayer(function (layer) {
-            if (isMarkerInsidePolygon(randomLat, randomLng, layer)) {
-                isNotInPark = false;
+            if(isMarkerInsidePolygon(randomLat,randomLng,layer)) {
+                isNotInPark=false;
             }
         });
-
-        if (isMarkerInsidePolygon(randomLat, randomLng, feature) && isNotInPark) {
-            arrayToAddTo.push({
-                lat: randomLat,
-                lng: randomLng,
-                popup: 'Háztartási hulladékgyűjtő sziget - VIII. kerület, household garbage dumpster'
-            });
+        if (isMarkerInsidePolygon(randomLat,randomLng,feature)&&isNotInPark) {
+          arrayToAddTo.push({
+            lat: randomLat,
+            lng: randomLng,
+            popup: 'Háztartási hulladékgyűjtő sziget - VIII. kerület, household garbage dumpster'
+          });
         }
-    }
+      }
 }
-
-onParkLayerLoad();
 
 function processGeoJSON(data) {
     var districtSelector = document.getElementById('districtSelector');
@@ -494,11 +451,19 @@ function processGeoJSON(data) {
             var option = document.createElement('option');
             option.value = feature.properties.name;
             option.text = feature.properties.name;
+            if(option.text == "VIII. kerület") {
+                option.style.color='white';
+            } else {
+                option.style.color='grey';
+                option.disabled=true;
+            }
             districtSelector.add(option);
         }
     }).addTo(map);
-
+    
     sortOptions(districtSelector);
+
+    document.getElementById('districtSelector').value = 'default';
 
     function sortOptions(menu) {
         var options = Array.from(menu.options);
@@ -760,7 +725,7 @@ function showDistrictGrid(districtLayer, index) {
         */
         // END 
         
-        console.log(finalColouringIndexGlass);
+        //console.log(finalColouringIndexGlass);
 
         var color = "BLUE";
 
@@ -911,3 +876,27 @@ function openTopContainerByButton() {
 animateLayerContainer();
 openContainer();
 openTopContainer();
+
+var imageSelector = document.getElementById('image-selector');
+var selectedImage = document.getElementById('selected-image');
+
+// Add an event listener to the file input
+imageSelector.addEventListener('change', function (event) {
+    // Check if a file has been selected
+    if (event.target.files.length > 0) {
+        // Set the display property of the image to 'block' to make it visible
+        selectedImage.style.display = 'block';
+
+        // Set the source of the image to the selected file
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            selectedImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // If no file is selected, hide the image
+        selectedImage.style.display = 'none';
+        selectedImage.src = ''; // Clear the image source
+    }
+});
