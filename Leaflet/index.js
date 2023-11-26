@@ -87,7 +87,13 @@ function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddT
     for (var i = 0; i < numCoordinates; i++) {
         var randomLat = Math.random() * (ne.lat - sw.lat) +sw.lat;
         var randomLng = Math.random() * (ne.lng - sw.lng) +sw.lng;
-        if (isMarkerInsidePolygon(randomLat,randomLng,feature)) {
+        var isNotInPark=true;
+        parkLayer.eachLayer(function (layer) {
+            if(isMarkerInsidePolygon(randomLat,randomLng,layer)) {
+                isNotInPark=false;
+            }
+        });
+        if (isMarkerInsidePolygon(randomLat,randomLng,feature)&&isNotInPark) {
           arrayToAddTo.push({
             lat: randomLat,
             lng: randomLng,
