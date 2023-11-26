@@ -79,30 +79,6 @@ var markersArrayHousehold = [
     { lat: 47.4822384, lng: 19.0915241, popup: 'háztartási hulladékgyűjtő sziget - VIII. kerület, Diószegi Sámuel utca (iskolával szemben)' },
 ];
 
-function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddTo) {
-    const bounds = feature.getBounds();
-    var sw=bounds.getSouthWest();
-    var ne=bounds.getNorthEast();
-
-    for (var i = 0; i < numCoordinates; i++) {
-        var randomLat = Math.random() * (ne.lat - sw.lat) +sw.lat;
-        var randomLng = Math.random() * (ne.lng - sw.lng) +sw.lng;
-        var isNotInPark=true;
-        parkLayer.eachLayer(function (layer) {
-            if(isMarkerInsidePolygon(randomLat,randomLng,layer)) {
-                isNotInPark=false;
-            }
-        });
-        if (isMarkerInsidePolygon(randomLat,randomLng,feature)&&isNotInPark) {
-          arrayToAddTo.push({
-            lat: randomLat,
-            lng: randomLng,
-            popup: 'Háztartási hulladékgyűjtő sziget - VIII. kerület, household garbage dumpster'
-          });
-        }
-      }
-}
-
 function isMarkerInsidePolygon(randomLat,randomLng, poly) {
     var polyPoints = poly.getLatLngs();
     var x = randomLat, y = randomLng;
@@ -408,62 +384,30 @@ function reupdateMap(layer) {
     currentLayer.addTo(map);
 }
 
-function animateLayerContainer() {
-    var layerContainer = document.getElementById('layerContainer');
-    layerContainer.classList.add('here');
-}
-
-function openContainer() {
-    var layerContainerRight = document.getElementById('gliding-container');
-    layerContainerRight.classList.add('show');
-}
-function closeContainer() {
-    var layerContainerRight = document.getElementById('gliding-container');
-    layerContainerRight.classList.remove('show');
-    layerContainerRight.classList.add('hide');
-}
-
-function reopenContainer() {
-    var layerContainerRight = document.getElementById('gliding-container');
-    layerContainerRight.classList.remove('hide');
-    layerContainerRight.classList.add('show');
-}
-
-function openTopContainer() {
-    var layerContainerTop = document.getElementById('top-container');
-    layerContainerTop.classList.add('show');
-}
-function closeTopContainer() {
-    var layerContainerTop = document.getElementById('top-container');
-    layerContainerTop.classList.remove('open');
-    layerContainerTop.classList.add('show');
-}
-
-function openTopContainerByButton() {
-    var layerContainerTop = document.getElementById('top-container');
-    layerContainerTop.classList.remove('show');
-    layerContainerTop.classList.add('open');
-}
-
-
-
-
-
-
-// Execute the animation when the page loads
-animateLayerContainer();
-openContainer();
-openTopContainer();
-
 $.getJSON('hungary_administrative_boundaries_level9_polygon.geojson', function (data) {
     processGeoJSON(data);
 });
 
 var parkLayer;
+function onParkLayerLoad() {
+    console.log('Park layer has loaded');
+    // You can call generateRandomCoordinatesInFeature here or do other tasks
+}
+
+function checkParkLayerLoaded(resolve) {
+    if (parkLayer && parkLayer.getLayers().length > 0) {
+        console.log('Park layer is loaded.');
+        if(resolve!=undefined) {
+            resolve();
+        }
+    }
+}
+
 $.getJSON('park.geojson', function (data) {
-    processParkGeoJSON(data);
+    processParkGeoJSON(data, onParkLayerLoad);
 });
-function processParkGeoJSON(data) {
+
+function processParkGeoJSON(data, callback) {
     parkLayer = L.geoJSON(data, {
         style: function (feature) {
             return {
@@ -471,10 +415,60 @@ function processParkGeoJSON(data) {
                 fillOpacity: 0
             };
         },
-        onEachFeature: function(feature) {
+        onEachFeature: function (feature) {
+            // Additional processing for each feature if needed
         }
     });
+
+    checkParkLayerLoaded();
+
+    // Use setInterval to periodically check if the park layer is loaded
+    var intervalId = setInterval(function () {
+        checkParkLayerLoaded(function () {
+            clearInterval(intervalId); // Stop the interval once the park layer is loaded
+            callback();
+        });
+    }, 100);
 }
+
+async function generateRandomCoordinatesInFeature(numCoordinates, feature, arrayToAddTo) {
+    // Wait for parkLayer to be loaded
+    await new Promise((resolve) => {
+        checkParkLayerLoaded(resolve);
+    });
+
+    if (!parkLayer || parkLayer.getLayers().length === 0) {
+        console.error('Park layer is not loaded properly. Skipping coordinate check.');
+        return; // or handle it in some way appropriate to your application
+    }
+
+    const bounds = feature.getBounds();
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+
+    for (var i = 0; i < numCoordinates; i++) {
+        var randomLat = Math.random() * (ne.lat - sw.lat) + sw.lat;
+        var randomLng = Math.random() * (ne.lng - sw.lng) + sw.lng;
+
+        var isNotInPark = true;
+
+        parkLayer.eachLayer(function (layer) {
+            if (isMarkerInsidePolygon(randomLat, randomLng, layer)) {
+                isNotInPark = false;
+            }
+        });
+
+        if (isMarkerInsidePolygon(randomLat, randomLng, feature) && isNotInPark) {
+            arrayToAddTo.push({
+                lat: randomLat,
+                lng: randomLng,
+                popup: 'Háztartási hulladékgyűjtő sziget - VIII. kerület, household garbage dumpster'
+            });
+        }
+    }
+}
+
+onParkLayerLoad();
 
 function processGeoJSON(data) {
     var districtSelector = document.getElementById('districtSelector');
@@ -875,3 +869,45 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function animateLayerContainer() {
+    var layerContainer = document.getElementById('layerContainer');
+    layerContainer.classList.add('here');
+}
+
+function openContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.add('show');
+}
+function closeContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.remove('show');
+    layerContainerRight.classList.add('hide');
+}
+
+function reopenContainer() {
+    var layerContainerRight = document.getElementById('gliding-container');
+    layerContainerRight.classList.remove('hide');
+    layerContainerRight.classList.add('show');
+}
+
+function openTopContainer() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.add('show');
+}
+function closeTopContainer() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.remove('open');
+    layerContainerTop.classList.add('show');
+}
+
+function openTopContainerByButton() {
+    var layerContainerTop = document.getElementById('top-container');
+    layerContainerTop.classList.remove('show');
+    layerContainerTop.classList.add('open');
+}
+
+// Execute the animation when the page loads
+animateLayerContainer();
+openContainer();
+openTopContainer();

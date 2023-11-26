@@ -1,7 +1,7 @@
 html, body, input, textarea, select, button {
-    font-family: 'Kanit', sans-serif;
+    font-family: 'Kanit', sans-serif ;
     border-color: #736b5e;
-    color: #e8e6e3;
+    color: rgb(209, 205, 199);;
 }
 
 #map {
@@ -213,8 +213,8 @@ body {
     top: -1050px;
     left: 50%;
     transform: translateX(-50%);
-    height: 1000px;
-    width: 1450px;
+    height: 1200px;
+    width: 1250px;
     background-color: rgb(27, 30, 31);
     border: 1px solid rgb(60, 65, 68);
     border-radius: 0 0 10px 10px;
@@ -260,4 +260,107 @@ body {
     background: none;
     border: none;
     color: #fff;
+}
+
+.form-control {
+    color: rgb(181, 175, 166) !important;
+    background-color: rgb(24, 26, 27) !important;
+    border-color: rgb(60, 65, 68) !important;
+}
+
+.btn-primary {
+    color: rgb(232, 230, 227) !important;
+    background-color: rgb(0, 98, 204) !important;
+    border-color: rgb(0, 86, 179) !important;
+}
+
+hr {
+    border-right-color: initial !important;
+    border-bottom-color: initial !important;
+    border-left-color: initial !important;
+    border-top-color: rgba(140, 130, 115, 0.1) !important;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Loading Progress */
+.progress-bar {
+    width: 100%;
+    height: 25px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    line-height: 25px;
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* Prediction Settings */
+#prediction-type {
+    width: calc(100% - 16px);
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* Image Input and Predict Button */
+#image-selector {
+    width: calc(100% - 16px);
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+#predict-button {
+    width: calc(100% - 16px);
+    padding: 8px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#predict-button:hover {
+    background-color: #0056b3;
+}
+
+/* Image and Predictions */
+hr {
+    border: 1px solid #ced4da;
+    margin: 20px 0;
+}
+
+#selected-image {
+    width: 100%;
+    height: auto;
+    margin-left: 10px;
+    border-radius: 4px;
+}
+
+h2 {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#prediction-list {
+    list-style-type: none;
+    margin-left: 10px;
+}
+
+#prediction-list li {
+    margin-bottom: 5px;
 }
