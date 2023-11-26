@@ -607,6 +607,12 @@ function showDistrictGrid(districtLayer, index) {
         }
     });
 
+    var districtsTrashTime=[3,2,1,3,3,3,3,3,3,2,2,1,2,2,1,1,1,2,1,1,1,1,2,1];
+    var sum=0;
+    districtsTrashTime.forEach(function (number) {
+        sum+=number;
+    });
+
     subdivisions.features.forEach(function (feature) {
         // Generate a random color (hex format)
         var color = '#' + Math.floor(Math.random()*16777215).toString(16);
@@ -656,6 +662,11 @@ function showDistrictGrid(districtLayer, index) {
         // RECYCLING CENTERS
         var recyclyingCentersPerDistrict = recyclingCenter;
         var recyclyingCentersPerDistrictAvg = recyclingCenter/23; // 23 districts in Budapest
+
+        // PICKING TRASH
+        var timePeriodOfPickingTrash = 3; // for district 8
+        var timePeriodOfPickingTrashAvg = sum/23; 
+        var timePickingTrashIndex = 1+(timePeriodOfPickingTrash-timePeriodOfPickingTrashAvg);
 
         var trashType=currentTrashType;
         var popup=""; 
